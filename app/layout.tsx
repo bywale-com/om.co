@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
+import 'lenis/dist/lenis.css'
 import './globals.css'
 import Nav from '@/components/Nav'
-import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: 'Om Coda Consulting',
@@ -21,7 +21,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="layout-shell">
         <Nav />
         {children}
-        <Footer />
       </body>
     </html>
   )

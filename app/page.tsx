@@ -1,11 +1,12 @@
 'use client'
+import Footer from '@/components/Footer'
 import useScrollEffects from '@/hooks/useScrollEffects'
 import {
   engage,
   industries,
   methodologyTerms,
   method,
-  newsletter,
+  practicesFocusIntro,
   practicesPin,
   site,
   thesis,
@@ -18,18 +19,17 @@ export default function Home() {
   return (
     <div className="site-canvas">
       <aside className="site-rail" aria-hidden="true">
-        <div className="site-rail__top">
-          <span className="gnum">01</span>
-          <span className="gcorner">A</span>
-          <span className="eyebrow" style={{ marginTop: 'auto' }}></span>
-        </div>
-        <div className="site-rail__rule"></div>
-        <div className="site-rail__bottom">
-          <span className="gnum">02</span>
-          <span className="gcorner">G</span>
-          <div className="layout-stack" style={{ marginTop: 'auto' }}>
-            <span className="layout-bar layout-bar--sm"></span>
-            <span className="layout-bar layout-bar--sm" style={{ width: 'min(100%,12ch)', opacity: 0.6 }}></span>
+        <div className="site-rail__media">
+          <div className="site-rail__media-fill">
+            <video
+              className="site-rail__media-video"
+              src="/assets/site-rail-bg.mp4"
+              muted
+              playsInline
+              loop
+              preload="metadata"
+              disablePictureInPicture
+            />
           </div>
         </div>
       </aside>
@@ -60,17 +60,15 @@ export default function Home() {
               <div className="gcell empty b-end"><span className="gcorner">K</span></div>
               <div className="gcell empty b-end"><span className="gcorner">L</span></div>
               <div className="gcell empty b-end"><span className="gcorner">M</span></div>
-              <div className="gcell cta c2 b-end r-end">
-                <span className="gcorner">→</span>
-                <span className="hcta-arrow">→</span>
-                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(16px, 1.8vw, 22px)', letterSpacing: '-0.02em', color: 'var(--paper-pure)' }}>Start with a hypothesis</span>
+              <div className="gcell empty c2 b-end r-end">
+                <span className="gcorner">N</span>
               </div>
             </div>
           </div>
         </section>
 
         {/* THESIS: 5-col shell aligned to hero — cols 1–2 pins, cols 3–5 inner 3-col grid */}
-        <section className="sec sec-thesis" id="thesis">
+        <section className="sec sec-thesis" id="thesis" data-thesis-pin-slide="0">
           <div className="wrap">
             <div className="thesis-split">
               <aside className="thesis-pin-col">
@@ -98,9 +96,13 @@ export default function Home() {
                     <div className="thesis-media-inner">
                       <div className="thesis-media-primary">
                         <div className="featured-video-wrap">
-                          <video playsInline controls preload="metadata">
-                            <source src="/assets/video_1.mp4" type="video/mp4" />
-                          </video>
+                          <img
+                            src="/assets/thesis-featured-meeting.png"
+                            alt="Colleagues collaborating around a meeting table with laptops in a modern office."
+                            width={806}
+                            height={536}
+                            decoding="async"
+                          />
                         </div>
                         <div className="featured-meta-bar reveal-on-scroll">
                           <div className="reveal-on-scroll__ghost" aria-hidden="true"></div>
@@ -135,7 +137,19 @@ export default function Home() {
                       <div className="thesis-split-scroll__sticky-photo">
                         <span className="gcorner">·</span>
                         <div className="thesis-col-cover__fill">
-                          <img className="thesis-col-cover__img" src="/assets/team-photo-1.png" alt="Professional portrait in a bright modern office" width={1200} height={1600} decoding="async" loading="lazy" />
+                          {thesis.pinSlides.map((slide, i) => (
+                            <img
+                              key={slide.src}
+                              className="thesis-col-cover__img"
+                              src={slide.src}
+                              alt={slide.alt}
+                              width={slide.width}
+                              height={slide.height}
+                              decoding="async"
+                              loading={i === 0 ? 'eager' : 'lazy'}
+                              data-thesis-pin-idx={String(i)}
+                            />
+                          ))}
                         </div>
                       </div>
                       <div className="thesis-split-scroll__copy">
@@ -216,15 +230,25 @@ export default function Home() {
           <div className="wrap">
             <div className="writing-canvas writing-collapsed">
               <div className="writing-rail">
-                <div className="gcell">
+                <div className="gcell writing-rail-lexicon-head">
                   <span className="gnum">05</span>
                   <span className="gcorner">A</span>
                   <span className="eyebrow" style={{ marginTop: 'auto', color: 'var(--ink)', borderBottomColor: 'var(--ink)' }}>Lexicon</span>
                 </div>
                 <div className="writing-rail__rule"></div>
-                <div className="gcell empty"><span className="gcorner">·</span></div>
-                <div className="writing-rail__rule"></div>
-                <div className="gcell empty"><span className="gcorner">·</span></div>
+                <div className="gcell writing-rail-lexicon-media">
+                  <div className="writing-rail-lexicon-media__fill" aria-hidden="true">
+                    <img
+                      className="writing-rail-lexicon-media__img"
+                      src="/assets/lexicon_image.jpg"
+                      alt=""
+                      width={3072}
+                      height={4608}
+                      decoding="async"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
               </div>
               <div className="writing-main">
                 <div className="gframe writing-lexicon-frame" style={{ gridAutoRows: 'auto' }}>
@@ -251,49 +275,42 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="sec" id="practices">
+        <section className="sec" id="practices" data-active-idx="0">
           <div className="practices-pin-stage">
             <div className="practices-pin-sticky">
               <div className="wrap">
                 <div className="gframe">
                   <div className="gcell empty"><span className="gcorner">B</span></div>
-                  <div className="gcell c3 practices-c3-media">
-                    <span className="gnum">03 · 0</span><span className="gcorner">C</span>
-                    {/* Financial services */}
-                    <div className="practices-industry-content" data-industry-idx="1">
-                      <div className="practices-c3-media__fill" aria-hidden="true">
-                        <video className="practices-c3-media__video" muted playsInline loop preload="metadata" disablePictureInPicture aria-hidden="true">
-                          <source src="/assets/verticals_1.mp4" type="video/mp4" />
-                          <source src="/assets/video_1.mp4" type="video/mp4" />
-                        </video>
+                  <div className="gcell c3 practices-c3-chrome">
+                    <div className="practices-cell-head">
+                      <div className="practices-cell-head__row">
+                        <span className="gnum">03 · 0</span>
+                        <span className="gcorner">C</span>
                       </div>
+                      <p className="t-eyebrow" style={{ marginTop: '10px' }}>
+                        Context
+                      </p>
                     </div>
-                    {/* Legal */}
-                    <div className="practices-industry-content" data-industry-idx="2">
-                      <div className="practices-c3-media__fill" aria-hidden="true">
-                        <img className="practices-c3-media__img" src="/assets/team-photo-1.png" alt="" width={1200} height={1600} decoding="async" loading="lazy" />
+                    <div className="practices-c3-focus-stack">
+                      <div
+                        className="practices-industry-content"
+                        data-industry-idx="0"
+                        data-reveal-order="1"
+                      >
+                        <h2 className="we-believe__title practices-c3-focus-title">{practicesFocusIntro.title}</h2>
+                        <p className="gbody practices-c3-focus-copy">{practicesFocusIntro.body}</p>
                       </div>
-                    </div>
-                    {/* Immigration */}
-                    <div className="practices-industry-content" data-industry-idx="3">
-                      <div className="practices-c3-media__fill" aria-hidden="true">
-                        <img className="practices-c3-media__img" src="/assets/verticals_1.gif" alt="" decoding="async" loading="lazy" />
-                      </div>
-                    </div>
-                    {/* Mission-driven orgs */}
-                    <div className="practices-industry-content" data-industry-idx="4">
-                      <div className="practices-c3-media__fill" aria-hidden="true">
-                        <img className="practices-c3-media__img" src="/assets/team-photo-1.png" alt="" width={1200} height={1600} decoding="async" loading="lazy" style={{ filter: 'grayscale(1) contrast(1.1)' }} />
-                      </div>
-                    </div>
-                    {/* Government */}
-                    <div className="practices-industry-content" data-industry-idx="5">
-                      <div className="practices-c3-media__fill" aria-hidden="true">
-                        <video className="practices-c3-media__video" muted playsInline loop preload="metadata" disablePictureInPicture aria-hidden="true">
-                          <source src="/assets/video_1.mp4" type="video/mp4" />
-                          <source src="/assets/verticals_1.mp4" type="video/mp4" />
-                        </video>
-                      </div>
+                      {industries.map((ind) => (
+                        <div
+                          key={ind.idx}
+                          className="practices-industry-content"
+                          data-industry-idx={String(ind.idx)}
+                          data-reveal-order="1"
+                        >
+                          <h2 className="we-believe__title practices-c3-focus-title">{ind.focusTitle}</h2>
+                          <p className="gbody practices-c3-focus-copy">{ind.focusBody}</p>
+                        </div>
+                      ))}
                     </div>
                   </div>
                   <div className="gcell empty r-end practices-case-cell">
@@ -365,37 +382,63 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
-                  <div className="gcell c2 r-end practices-news-cell" style={{ minHeight: 0 }}>
-                    <div className="practices-cell-head">
-                      <div className="practices-cell-head__row">
-                        <span className="gnum">03 · 3</span><span className="gcorner">G</span>
+                  <div className="gcell c2 r-end practices-news-cell practices-fill-media-cell" style={{ minHeight: 0 }}>
+                    <span className="gnum">03 · 3</span>
+                    <span className="gcorner">G</span>
+                    {/* Financial services */}
+                    <div className="practices-industry-content" data-industry-idx="1">
+                      <div className="practices-c3-media__fill" aria-hidden="true">
+                        <video className="practices-c3-media__video" muted playsInline loop preload="auto" disablePictureInPicture aria-hidden="true">
+                          <source src="/assets/financial_services.mp4" type="video/mp4" />
+                        </video>
                       </div>
-                      <h2 className="we-believe__title practices-news-title">Highlights</h2>
                     </div>
-                    {industries.map((ind) => (
-                      <div
-                        key={ind.idx}
-                        className="practices-industry-content"
-                        data-industry-idx={String(ind.idx)}
-                        data-reveal-order="4"
-                      >
-                        <div className="practices-news-carousel">
-                          <div
-                            className="practices-news-carousel__viewport"
-                            tabIndex={0}
-                            aria-label={`${ind.label} — highlights`}
-                          >
-                            <div className="practices-news-carousel__slide"><img src="/assets/team-photo-1.png" alt="" width={800} height={600} loading="lazy" decoding="async" /></div>
-                            <div className="practices-news-carousel__slide"><img src="/assets/team-photo-1.png" alt="" width={800} height={600} loading="lazy" decoding="async" /></div>
-                            <div className="practices-news-carousel__slide"><img src="/assets/team-photo-1.png" alt="" width={800} height={600} loading="lazy" decoding="async" /></div>
-                          </div>
-                          <div className="practices-news-carousel__controls">
-                            <button type="button" className="practices-news-carousel__btn" data-practices-news-prev aria-label="Previous slide">Prev</button>
-                            <button type="button" className="practices-news-carousel__btn" data-practices-news-next aria-label="Next slide">Next</button>
-                          </div>
-                        </div>
+                    {/* Legal */}
+                    <div className="practices-industry-content" data-industry-idx="2">
+                      <div className="practices-c3-media__fill" aria-hidden="true">
+                        <video className="practices-c3-media__video" muted playsInline loop preload="auto" disablePictureInPicture aria-hidden="true">
+                          <source src="/assets/legal.mp4" type="video/mp4" />
+                        </video>
                       </div>
-                    ))}
+                    </div>
+                    {/* Immigration */}
+                    <div className="practices-industry-content" data-industry-idx="3">
+                      <div className="practices-c3-media__fill" aria-hidden="true">
+                        <img
+                          className="practices-c3-media__img"
+                          src="/assets/immigration.jpg"
+                          alt=""
+                          width={2000}
+                          height={1233}
+                          decoding="async"
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
+                    {/* Mission-driven orgs */}
+                    <div className="practices-industry-content" data-industry-idx="4">
+                      <div className="practices-c3-media__fill" aria-hidden="true">
+                        <img
+                          className="practices-c3-media__img"
+                          src="/assets/mission-driven.jpg"
+                          alt=""
+                          decoding="async"
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
+                    {/* Public sector */}
+                    <div className="practices-industry-content" data-industry-idx="5">
+                      <div className="practices-c3-media__fill" aria-hidden="true">
+                        <img
+                          className="practices-c3-media__img"
+                          src="/assets/public-sector.jpg"
+                          alt=""
+                          decoding="async"
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -414,7 +457,7 @@ export default function Home() {
               </div>
               <div className="gcell empty r-end"><span className="gcorner">D</span></div>
 
-              <div className="gcell engage-rail-cell"><span className="gnum">·</span><span className="gcorner">F</span><p className="gbody engage-rail-cell__bottom">Milestone-priced engagements.</p></div>
+              <div className="gcell empty"><span className="gcorner">F</span></div>
               <div className="gcell engage-rail-cell">
                 <span className="gnum">·</span><span className="gcorner">G</span>
                 <h2 className="we-believe__title engage-rail-cell__title">{method.title}</h2>
@@ -434,24 +477,11 @@ export default function Home() {
                 <h2 className="we-believe__title engage-rail-cell__title">{engage.titleNot}</h2>
                 <p className="gbody" style={{ marginTop: '12px' }}>{engage.bodyNot}</p>
               </div>
-              <div className="gcell empty r-end engage-col-span-2"><span className="gcorner">J</span></div>
             </div>
           </div>
         </section>
 
-        <section className="sec" aria-hidden="true">
-          <div className="wrap">
-            <div className="gframe" style={{ gridAutoRows: 'minmax(120px, 1fr)', borderColor: 'var(--ink)', background: 'var(--ink)' }}>
-              <div className="gcell dark c3" style={{ minHeight: 0, borderColor: '#2a2a2a' }}><span className="gnum" style={{ color: 'var(--mute-2)' }}>07</span><span className="gcorner">A</span><div className="layout-stack" style={{ marginTop: 'auto' }}><span className="layout-bar layout-bar--xl layout-bar--on-dark"></span><span className="layout-bar layout-bar--lg layout-bar--on-dark"></span></div></div>
-              <div className="gcell dark c2 r-end" style={{ minHeight: 0, borderColor: '#2a2a2a' }}><span className="gnum" style={{ color: 'var(--mute-2)' }}>07 · 1</span><span className="gcorner">B</span>
-                <div className="layout-stack" style={{ marginTop: '16px' }}><span className="layout-bar layout-bar--body layout-bar--on-dark"></span><span className="layout-bar layout-bar--body layout-bar--on-dark" style={{ width: '80%' }}></span></div>
-                <div className="form"><input type="text" readOnly tabIndex={-1} aria-hidden="true" /><button type="button">→</button></div>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.119em', textTransform: 'uppercase', color: 'transparent', marginTop: '8px', display: 'block', height: '12px' }}></span>
-              </div>
-            </div>
-          </div>
-        </section>
-
+        <Footer />
       </div>
     </div>
   )

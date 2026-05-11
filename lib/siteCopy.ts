@@ -37,6 +37,37 @@ export const thesis = {
         'Legal practices, immigration consultancies, financial services — organizations where trust compounds over years and the question is how to turn it into sustainable revenue.',
     },
   ],
+  /** Sticky thesis rail: one image per panel (scroll-synced in useScrollEffects). Files are portrait JPEGs. */
+  pinSlides: [
+    {
+      src: '/assets/thesis-pin-1.jpg',
+      width: 682,
+      height: 1024,
+      alt:
+        'Three professionals collaborating at a table with laptops in a modern office with a warm accent wall.',
+    },
+    {
+      src: '/assets/thesis-pin-2.jpg',
+      width: 682,
+      height: 1024,
+      alt:
+        'A professional in a light blue hijab seated at a conference table in discussion; bright contemporary office.',
+    },
+    {
+      src: '/assets/thesis-pin-3.jpg',
+      width: 682,
+      height: 1024,
+      alt:
+        'Four diverse colleagues standing together reviewing a document in a bright open-plan office.',
+    },
+  ],
+} as const
+
+/** Intro copy for the practices focus column (data-industry-idx 0) before a vertical is locked in. */
+export const practicesFocusIntro = {
+  title: 'Where we work',
+  body:
+    'One methodology across five contexts. Scroll this band to move through industries — the write-up, disciplines, signals, and media all track together.',
 } as const
 
 /** Practices verticals: order matches data-industry-idx 1–5 and label-swap track (after “Industries”). */
@@ -44,6 +75,9 @@ export const industries = [
   {
     idx: 1,
     label: 'Financial services',
+    focusTitle: 'Financial services',
+    focusBody:
+      'We look for where fee stories, offer ladders, and partnership routes no longer match how sophisticated clients buy — then redesign the pathways so revenue compounds instead of eroding at the margin.',
     solutions: [
       'Offer development',
       'Revenue architecture',
@@ -60,6 +94,9 @@ export const industries = [
   {
     idx: 2,
     label: 'Legal',
+    focusTitle: 'Legal',
+    focusBody:
+      'Partner calendars, intake design, and pricing that never moved with the market — we map how work actually flows so capacity, client experience, and referrals stop trading off against each other.',
     solutions: [
       'Offer development',
       'Pipeline development',
@@ -76,6 +113,9 @@ export const industries = [
   {
     idx: 3,
     label: 'Immigration',
+    focusTitle: 'Immigration',
+    focusBody:
+      'When operations are the offer, small routing gaps become brand risk. We align unit economics, intake-to-file discipline, and renewal rhythm so high volume stays defensible.',
     solutions: [
       'Offer development',
       'Operations & process design',
@@ -92,6 +132,9 @@ export const industries = [
   {
     idx: 4,
     label: 'Mission-driven orgs',
+    focusTitle: 'Mission-driven orgs',
+    focusBody:
+      'Earned revenue, grants, and programs often answer different questions until a major supporter asks for one story. We help you sequence offer and measurement so sustainability is legible, not improvised.',
     solutions: [
       'Program architecture',
       'Offer development',
@@ -108,6 +151,9 @@ export const industries = [
   {
     idx: 5,
     label: 'Public sector',
+    focusTitle: 'Public sector',
+    focusBody:
+      'Procurement, mandates, and reporting layers consume capacity. We treat alignment and ownership as the work — so improvements land where decisions actually happen, not only in slide decks.',
     solutions: [
       'Diagnostic audit',
       'Stakeholder alignment',
@@ -239,6 +285,46 @@ export const engage = {
 
 export const newsletter = {
   hint: 'Weighted milestones — not hourly fog. Reach out when you are ready to structure the next stage.',
+  emailPlaceholder: 'you@firm.com',
+  submitLabel: 'Book →',
+} as const
+
+/** Footer newsroom strip — short cards; hrefs are placeholders until posts ship. */
+export const newsroom = {
+  title: 'Newsroom',
+  subtitle: 'Field notes on offers, partnerships, and how revenue actually moves.',
+  items: [
+    {
+      date: '2026 · Field note',
+      title: 'When the fee story and the buying motion diverge',
+      dek: 'Why incremental repricing rarely fixes compression in professional services.',
+      href: '#',
+    },
+    {
+      date: '2026 · Method',
+      title: 'Weighted milestones without hourly fog',
+      dek: 'How we structure engagements so risk stays calibrated at every stage.',
+      href: '#',
+    },
+    {
+      date: '2026 · Context',
+      title: 'Partnership routes that were never mapped',
+      dek: 'Finding the parties who already own access — before another outbound campaign.',
+      href: '#',
+    },
+    {
+      date: '2026 · Practice',
+      title: 'Intake is the offer in high-trust volume work',
+      dek: 'Operations, brand, and margin in one system — and what breaks first.',
+      href: '#',
+    },
+    {
+      date: '2026 · Studio',
+      title: 'Lexicon: offer development vs positioning',
+      dek: 'Plain language we use with clients so scope and value stay aligned.',
+      href: '#writing',
+    },
+  ],
 } as const
 
 export const footer = {

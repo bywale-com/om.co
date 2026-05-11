@@ -1,9 +1,13 @@
 'use client'
+import Lenis from 'lenis'
 import { useEffect } from 'react'
 
 export default function useScrollEffects() {
   useEffect(() => {
     if (typeof window === 'undefined') return
+
+    var ac = new AbortController()
+    var sig = ac.signal
 
     function syncHdrH() {
       var hdr = document.querySelector('.hdr')
@@ -12,10 +16,9 @@ export default function useScrollEffects() {
       }
     }
     syncHdrH()
-    window.addEventListener('resize', syncHdrH)
+    window.addEventListener('resize', syncHdrH, { signal: sig })
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncHdrH)
 
-    /* Reveal only while scrolling — no eager scan on load (that felt "not scroll-triggered"). */
     function scanRevealOnScroll() {
       var pending = document.querySelectorAll('.reveal-on-scroll:not(.is-revealed)')
       if (!pending.length) return
@@ -28,18 +31,31 @@ export default function useScrollEffects() {
         }
       })
     }
-    function scrollYUniversal(lenisInstance: any) {
-      if (lenisInstance != null && typeof lenisInstance.scroll === 'number') return lenisInstance.scroll
-      if (lenisInstance != null && typeof lenisInstance.animatedScroll === 'number') return lenisInstance.animatedScroll
+    function scrollYUniversal(lenisInstance: Lenis | null) {
+      if (lenisInstance != null) return lenisInstance.scroll
       return window.scrollY || document.documentElement.scrollTop || 0
     }
-    function playPracticesC3Video(secEl: Element) {
-      secEl.querySelectorAll('.practices-c3-media__video').forEach(function (vid) {
-        var r = (vid as HTMLVideoElement).play()
-        if (r && typeof r.catch === 'function') r.catch(function () {})
+    /** Play only the fill-cell video for the active industry; pause others. */
+    function syncPracticesFillVideos(sec: HTMLElement) {
+      var raw = sec.getAttribute('data-active-idx')
+      var active = raw != null ? parseInt(raw, 10) : 0
+      if (Number.isNaN(active)) active = 0
+      var unveiled = sec.classList.contains('practices-insurance-unveil')
+      sec.querySelectorAll('.practices-c3-media__video').forEach(function (el) {
+        var vid = el as HTMLVideoElement
+        var layer = vid.closest('.practices-industry-content') as HTMLElement | null
+        var idxAttr = layer && layer.getAttribute('data-industry-idx')
+        var layerIdx = idxAttr != null ? parseInt(idxAttr, 10) : NaN
+        var shouldPlay = unveiled && active >= 1 && active <= 5 && layerIdx === active
+        if (shouldPlay) {
+          var r = vid.play()
+          if (r && typeof r.catch === 'function') r.catch(function () {})
+        } else {
+          vid.pause()
+        }
       })
     }
-    function updatePracticesLabelSwap(lenisInstance: any) {
+    function updatePracticesLabelSwap(lenisInstance: Lenis | null) {
       var sec = document.getElementById('practices')
       var track = document.querySelector('.practices-label-swap__track') as HTMLElement | null
       if (!sec || !track) return
@@ -48,8 +64,9 @@ export default function useScrollEffects() {
       if (mq && mq.matches) {
         track.style.setProperty('--practices-swap', '1')
         if (inner) inner.setAttribute('data-active-index', '5')
+        sec.setAttribute('data-active-idx', '5')
         sec.classList.add('practices-insurance-unveil')
-        playPracticesC3Video(sec)
+        syncPracticesFillVideos(sec)
         return
       }
       var stage = sec.querySelector('.practices-pin-stage')
@@ -70,20 +87,20 @@ export default function useScrollEffects() {
       sec.setAttribute('data-active-idx', String(idx))
       if (idx >= 1 && !sec.classList.contains('practices-insurance-unveil')) {
         sec.classList.add('practices-insurance-unveil')
-        playPracticesC3Video(sec)
       }
+      syncPracticesFillVideos(sec)
     }
-    function wirePracticesLabelSwap(lenisInstance: any) {
+    function wirePracticesLabelSwap(lenisInstance: Lenis | null) {
       var track = document.querySelector('.practices-label-swap__track')
       if (!track) return
       function tick() {
         updatePracticesLabelSwap(lenisInstance)
       }
       tick()
-      window.addEventListener('scroll', tick, { passive: true })
-      window.addEventListener('resize', tick)
-      window.addEventListener('wheel', tick, { passive: true })
-      document.addEventListener('touchmove', tick, { passive: true })
+      window.addEventListener('scroll', tick, { passive: true, signal: sig })
+      window.addEventListener('resize', tick, { signal: sig })
+      window.addEventListener('wheel', tick, { passive: true, signal: sig })
+      document.addEventListener('touchmove', tick, { passive: true, signal: sig })
       window.addEventListener(
         'keydown',
         function (e) {
@@ -92,9 +109,9 @@ export default function useScrollEffects() {
             tick()
           }
         },
-        true
+        { capture: true, signal: sig }
       )
-      if (lenisInstance && typeof lenisInstance.on === 'function') {
+      if (lenisInstance) {
         lenisInstance.on('scroll', tick)
       }
     }
@@ -110,35 +127,95 @@ export default function useScrollEffects() {
           if (!w) return
           viewport!.scrollBy({ left: dir * w, behavior: 'smooth' })
         }
-        if (prev) prev.addEventListener('click', function () { slideBy(-1) })
-        if (next) next.addEventListener('click', function () { slideBy(1) })
+        if (prev) prev.addEventListener('click', function () { slideBy(-1) }, { signal: sig })
+        if (next) next.addEventListener('click', function () { slideBy(1) }, { signal: sig })
       })
     }
 
-    /* Practices C3: keep paused until Insurance unveils (see updatePracticesLabelSwap). */
+    function wireSiteRailVideo() {
+      var vid = document.querySelector('.site-rail__media-video') as HTMLVideoElement | null
+      if (!vid) return
+      var mq = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)')
+      if (mq && mq.matches) {
+        vid.pause()
+        return
+      }
+      function tryPlay() {
+        var r = vid!.play()
+        if (r && typeof r.catch === 'function') r.catch(function () {})
+      }
+      vid.addEventListener('loadeddata', tryPlay, { once: true, signal: sig })
+      tryPlay()
+    }
+
     function wirePracticesC3Video() {
       var sec = document.getElementById('practices')
       if (!sec) return
+      var secEl = sec as HTMLElement
       sec.querySelectorAll('.practices-c3-media__video').forEach(function (video) {
         var vid = video as HTMLVideoElement
-        vid.pause()
         vid.addEventListener(
           'loadeddata',
           function () {
-            if (!sec!.classList.contains('practices-insurance-unveil')) {
-              vid.pause()
-            }
+            syncPracticesFillVideos(secEl)
           },
-          { once: true }
+          { once: true, signal: sig }
         )
       })
     }
 
-    function wireWritingShrink(lenisInstance: any) {
+    function pickThesisPinSlideIndex(panels: Element[], yProbe: number): number {
+      if (!panels.length) return 0
+      for (var i = 0; i < panels.length; i++) {
+        var r = panels[i].getBoundingClientRect()
+        if (yProbe < r.top) return Math.max(0, i - 1)
+        if (yProbe <= r.bottom) return i
+      }
+      return panels.length - 1
+    }
+    function updateThesisPinSlides() {
+      var sec = document.getElementById('thesis')
+      if (!sec) return
+      var panels = Array.from(sec.querySelectorAll('.thesis-split-scroll__copy .thesis-phase-panel'))
+      if (!panels.length) return
+      var vh = window.innerHeight || document.documentElement.clientHeight || 600
+      var yProbe = vh * 0.42
+      var idx = pickThesisPinSlideIndex(panels, yProbe)
+      idx = Math.max(0, Math.min(panels.length - 1, idx))
+      sec.setAttribute('data-thesis-pin-slide', String(idx))
+      sec.querySelectorAll('.thesis-col-cover__fill .thesis-col-cover__img').forEach(function (img, i) {
+        img.setAttribute('aria-hidden', i === idx ? 'false' : 'true')
+      })
+    }
+    function wireThesisPinSlides(lenisInstance: Lenis | null) {
+      if (!document.querySelector('#thesis .thesis-col-cover__fill')) return
+      function tick() {
+        updateThesisPinSlides()
+      }
+      tick()
+      window.addEventListener('scroll', tick, { passive: true, signal: sig })
+      window.addEventListener('resize', tick, { signal: sig })
+      window.addEventListener('wheel', tick, { passive: true, signal: sig })
+      document.addEventListener('touchmove', tick, { passive: true, signal: sig })
+      window.addEventListener(
+        'keydown',
+        function (e) {
+          var k = e.key
+          if (k === ' ' || k === 'PageDown' || k === 'PageUp' || k === 'End' || k === 'Home' || k === 'ArrowDown' || k === 'ArrowUp') {
+            tick()
+          }
+        },
+        { capture: true, signal: sig }
+      )
+      if (lenisInstance) {
+        lenisInstance.on('scroll', tick)
+      }
+    }
+
+    function wireWritingShrink(lenisInstance: Lenis | null) {
       var sec = document.getElementById('writing')
       var canvas = sec && sec.querySelector('.writing-canvas')
       if (!canvas || !sec) return
-      /** Rail starts retracted; expands when #writing intersects the viewport (scroll reveals). */
       function tick() {
         var vh = window.innerHeight || document.documentElement.clientHeight || 600
         var rect = (sec as HTMLElement).getBoundingClientRect()
@@ -150,9 +227,38 @@ export default function useScrollEffects() {
         }
       }
       tick()
-      window.addEventListener('scroll', tick, { passive: true })
-      window.addEventListener('resize', tick)
-      if (lenisInstance && typeof lenisInstance.on === 'function') {
+      window.addEventListener('scroll', tick, { passive: true, signal: sig })
+      window.addEventListener('resize', tick, { signal: sig })
+      if (lenisInstance) {
+        lenisInstance.on('scroll', tick)
+      }
+    }
+
+    /** Footer brand rail: retract until #contact is well into view (stricter top band than #writing). */
+    function wireFooterBrandShrink(lenisInstance: Lenis | null) {
+      if (!document.getElementById('contact')) return
+      function tick() {
+        var foot = document.getElementById('contact')
+        if (!foot) return
+        var w = window.innerWidth || document.documentElement.clientWidth || 9999
+        if (w <= 920) {
+          foot.classList.remove('site-footer--brand-collapsed')
+          return
+        }
+        var vh = window.innerHeight || document.documentElement.clientHeight || 600
+        var rect = foot.getBoundingClientRect()
+        // Stricter than #writing: top must pass 70% line (≈30% more scroll before rail expands).
+        var inViewportBand = rect.top < vh * 0.7 && rect.bottom > 0
+        if (inViewportBand) {
+          foot.classList.remove('site-footer--brand-collapsed')
+        } else {
+          foot.classList.add('site-footer--brand-collapsed')
+        }
+      }
+      tick()
+      window.addEventListener('scroll', tick, { passive: true, signal: sig })
+      window.addEventListener('resize', tick, { signal: sig })
+      if (lenisInstance) {
         lenisInstance.on('scroll', tick)
       }
     }
@@ -168,18 +274,18 @@ export default function useScrollEffects() {
         methodCanvas.classList.remove('method-collapsed')
       }
     }
-    function wireMethodRail(lenisInstance: any) {
+    function wireMethodRail(lenisInstance: Lenis | null) {
       if (!document.querySelector('#method .method-canvas')) return
       function tick() { updateMethodRail() }
       tick()
-      window.addEventListener('scroll', tick, { passive: true })
-      window.addEventListener('resize', tick)
-      if (lenisInstance && typeof lenisInstance.on === 'function') {
+      window.addEventListener('scroll', tick, { passive: true, signal: sig })
+      window.addEventListener('resize', tick, { signal: sig })
+      if (lenisInstance) {
         lenisInstance.on('scroll', tick)
       }
     }
 
-    function wireRevealOnScroll(lenisInstance: any) {
+    function wireRevealOnScroll(lenisInstance: Lenis | null) {
       var all = document.querySelectorAll('.reveal-on-scroll')
       if (!all.length) return
       var mq = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -192,10 +298,10 @@ export default function useScrollEffects() {
       function tick() {
         scanRevealOnScroll()
       }
-      window.addEventListener('scroll', tick, { passive: true })
-      window.addEventListener('resize', tick)
-      window.addEventListener('wheel', tick, { passive: true })
-      document.addEventListener('touchmove', tick, { passive: true })
+      window.addEventListener('scroll', tick, { passive: true, signal: sig })
+      window.addEventListener('resize', tick, { signal: sig })
+      window.addEventListener('wheel', tick, { passive: true, signal: sig })
+      document.addEventListener('touchmove', tick, { passive: true, signal: sig })
       window.addEventListener(
         'keydown',
         function (e) {
@@ -204,13 +310,13 @@ export default function useScrollEffects() {
             tick()
           }
         },
-        true
+        { capture: true, signal: sig }
       )
-      if (lenisInstance && typeof lenisInstance.on === 'function') {
+      if (lenisInstance) {
         lenisInstance.on('scroll', tick)
       }
-      /* Mid-page refresh / hash restore: reveal anything already in view without waiting for input */
       requestAnimationFrame(function () {
+        if (sig.aborted) return
         var y = window.scrollY || document.documentElement.scrollTop || 0
         if (y > 48) {
           scanRevealOnScroll()
@@ -233,62 +339,71 @@ export default function useScrollEffects() {
         canvas.classList.remove('rail-collapsed')
       }
     }
-    function wireRailFromScroll(lenisInstance: any) {
+    function wireRailFromScroll(lenisInstance: Lenis | null) {
       updateRailFromScroll()
-      window.addEventListener('scroll', function () { updateRailFromScroll() }, { passive: true })
-      window.addEventListener('resize', function () { updateRailFromScroll() })
-      if (lenisInstance && typeof lenisInstance.on === 'function') {
-        lenisInstance.on('scroll', function (e: any) { updateRailFromScroll(e.scroll) })
+      window.addEventListener('scroll', function () { updateRailFromScroll() }, { passive: true, signal: sig })
+      window.addEventListener('resize', function () { updateRailFromScroll() }, { signal: sig })
+      if (lenisInstance) {
+        lenisInstance.on('scroll', function (instance) {
+          updateRailFromScroll(instance.scroll)
+        })
       }
     }
 
-    if (typeof (window as any).Lenis === 'undefined') {
-      wireRailFromScroll(null)
-      wireRevealOnScroll(null)
-      wirePracticesLabelSwap(null)
-      wirePracticesC3Video()
-      wirePracticesNewsCarousel()
-      wireMethodRail(null)
-      wireWritingShrink(null)
-      return
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    var lenis: Lenis | null = null
+
+    if (!reduceMotion) {
+      lenis = new Lenis({
+        duration: 1.15,
+        easing: function (t: number) {
+          return Math.min(1, 1.001 - Math.pow(2, -10 * t))
+        },
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: 1.4,
+        autoRaf: true,
+      })
     }
 
-    var LenisClass = (window as any).Lenis
-    var lenis = new LenisClass({ duration: 1.15, easing: function (t: number) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)) }, smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1.4 })
-    function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf) }
-    requestAnimationFrame(raf)
-
-    function scrollYNow(inst: any) {
-      if (inst != null && typeof inst.scroll === 'number') return inst.scroll
-      if (inst != null && typeof inst.animatedScroll === 'number') return inst.animatedScroll
-      return window.scrollY || document.documentElement.scrollTop || 0
-    }
     wireRailFromScroll(lenis)
-
     wireRevealOnScroll(lenis)
-    wirePracticesLabelSwap(lenis)
+    wireThesisPinSlides(lenis)
     wirePracticesC3Video()
+    wirePracticesLabelSwap(lenis)
+    wireSiteRailVideo()
     wirePracticesNewsCarousel()
     wireMethodRail(lenis)
     wireWritingShrink(lenis)
+    wireFooterBrandShrink(lenis)
 
-    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
-      a.addEventListener('click', function (e) {
+    document.addEventListener(
+      'click',
+      function (e) {
+        var t = e.target as Element | null
+        if (!t) return
+        var a = t.closest && (t.closest('a[href^="#"]') as HTMLAnchorElement | null)
+        if (!a || !document.contains(a)) return
         var id = a.getAttribute('href')
-        if (id && id.length > 1) {
-          var target = document.querySelector(id)
-          if (target) {
-            e.preventDefault()
-            var hdr = document.querySelector('.hdr')
-            var off = hdr ? -((hdr as HTMLElement).offsetHeight + 8) : -16
-            lenis.scrollTo(target, { offset: off, duration: 1.25 })
-          }
+        if (!id || id.length <= 1) return
+        var target = document.querySelector(id) as HTMLElement | null
+        if (!target) return
+        e.preventDefault()
+        var hdr = document.querySelector('.hdr')
+        var off = hdr ? -((hdr as HTMLElement).offsetHeight + 8) : -16
+        if (lenis) {
+          lenis.scrollTo(target, { offset: off, duration: 1.25 })
+        } else {
+          var top = target.getBoundingClientRect().top + window.scrollY + off
+          window.scrollTo({ top, behavior: 'smooth' })
         }
-      })
-    })
+      },
+      { capture: true, signal: sig }
+    )
 
     return () => {
-      window.removeEventListener('resize', syncHdrH)
+      ac.abort()
+      if (lenis) lenis.destroy()
     }
   }, [])
 }
