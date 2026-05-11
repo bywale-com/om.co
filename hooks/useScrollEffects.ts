@@ -137,13 +137,12 @@ export default function useScrollEffects() {
       if (!(el instanceof HTMLVideoElement)) return
       const video: HTMLVideoElement = el
       var mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)')
-      var mqMobile = window.matchMedia('(max-width: 920px)')
       function tryPlay() {
         var r = video.play()
         if (r && typeof r.catch === 'function') r.catch(function () {})
       }
       function sync() {
-        if (mqReduce.matches || mqMobile.matches) {
+        if (mqReduce.matches) {
           video.pause()
           return
         }
@@ -151,7 +150,6 @@ export default function useScrollEffects() {
       }
       video.addEventListener('loadeddata', sync, { once: true, signal: sig })
       mqReduce.addEventListener('change', sync, { signal: sig })
-      mqMobile.addEventListener('change', sync, { signal: sig })
       sync()
     }
 
@@ -326,12 +324,27 @@ export default function useScrollEffects() {
 
     function updateMethodRail() {
       var method = document.getElementById('method')
-      var methodCanvas = document.querySelector('#method .method-canvas')
+      var methodCanvas = document.querySelector('#method .method-canvas') as HTMLElement | null
       if (!method || !methodCanvas) return
+      /* Stacked layout: class only fights sticky chrome — skip to avoid threshold oscillation. */
+      var mqMobile = window.matchMedia && window.matchMedia('(max-width: 920px)')
+      if (mqMobile.matches) {
+        methodCanvas.classList.remove('method-collapsed')
+        return
+      }
       var vh = window.innerHeight || document.documentElement.clientHeight || 600
-      if (method.getBoundingClientRect().top <= vh * 0.5) {
+      var top = method.getBoundingClientRect().top
+      /*
+        Single-threshold toggle reflows the rail (20% → 0), which moves #method in the viewport
+        and flips the same predicate → scroll “trapped” / double-pin. Use separate enter/exit bands.
+      */
+      var collapseEnter = vh * 0.5
+      var dead = Math.min(120, Math.max(56, vh * 0.14))
+      var collapseExit = collapseEnter + dead
+      var collapsed = methodCanvas.classList.contains('method-collapsed')
+      if (!collapsed && top <= collapseEnter) {
         methodCanvas.classList.add('method-collapsed')
-      } else {
+      } else if (collapsed && top > collapseExit) {
         methodCanvas.classList.remove('method-collapsed')
       }
     }
@@ -341,6 +354,8 @@ export default function useScrollEffects() {
       tick()
       window.addEventListener('scroll', tick, { passive: true, signal: sig })
       window.addEventListener('resize', tick, { signal: sig })
+      var mqMethodStack = window.matchMedia && window.matchMedia('(max-width: 920px)')
+      if (mqMethodStack) mqMethodStack.addEventListener('change', tick, { signal: sig })
       if (lenisInstance) {
         lenisInstance.on('scroll', tick)
       }

@@ -7,7 +7,6 @@ import {
   methodologyTerms,
   method,
   practicesFocusIntro,
-  practicesPin,
   site,
   thesis,
   whatWeDo,
@@ -373,7 +372,6 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                      <p className="practices-pin-hint">{practicesPin.hint}</p>
                     </div>
                   </div>
                   <div className="gcell c2 practices-solutions-cell" style={{ minHeight: 0 }}>

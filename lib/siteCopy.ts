@@ -169,10 +169,6 @@ export const industries = [
   },
 ] as const
 
-export const practicesPin = {
-  hint: 'Scroll through Financial services, Legal, Immigration, mission-driven orgs, and public-sector work — same methodology, different context.',
-} as const
-
 export const method = {
   eyebrow: 'Method',
   title: 'How we think',
