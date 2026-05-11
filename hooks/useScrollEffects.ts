@@ -133,19 +133,26 @@ export default function useScrollEffects() {
     }
 
     function wireSiteRailVideo() {
-      var vid = document.querySelector('.site-rail__media-video') as HTMLVideoElement | null
-      if (!vid) return
-      var mq = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)')
-      if (mq && mq.matches) {
-        vid.pause()
-        return
-      }
+      const el = document.querySelector('.site-rail__media-video')
+      if (!(el instanceof HTMLVideoElement)) return
+      const video: HTMLVideoElement = el
+      var mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)')
+      var mqMobile = window.matchMedia('(max-width: 920px)')
       function tryPlay() {
-        var r = vid!.play()
+        var r = video.play()
         if (r && typeof r.catch === 'function') r.catch(function () {})
       }
-      vid.addEventListener('loadeddata', tryPlay, { once: true, signal: sig })
-      tryPlay()
+      function sync() {
+        if (mqReduce.matches || mqMobile.matches) {
+          video.pause()
+          return
+        }
+        tryPlay()
+      }
+      video.addEventListener('loadeddata', sync, { once: true, signal: sig })
+      mqReduce.addEventListener('change', sync, { signal: sig })
+      mqMobile.addEventListener('change', sync, { signal: sig })
+      sync()
     }
 
     function wirePracticesC3Video() {

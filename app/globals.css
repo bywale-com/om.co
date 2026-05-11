@@ -2159,30 +2159,9 @@ section.sec.tight > .wrap > .gframe {
 
 @media (max-width: 920px) {
   .site-canvas { flex-direction: column; }
+  /* Mobile: decorative rail + loop video off — layout is main-only. */
   .site-rail {
-    position: relative;
-    flex: 0 0 auto;
-    width: 100%;
-    max-width: none;
-    height: auto;
-    max-height: none;
-    min-height: 50vh;
-    border-right: none;
-    border-bottom: var(--grid-rule);
-  }
-  .site-rail__media {
-    flex: 1 1 auto;
-    min-height: min(50vh, 520px);
-  }
-  .site-canvas.rail-collapsed .site-rail {
-    flex: 0 0 0;
-    min-height: 0;
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    opacity: 0;
-    border-bottom-width: 0;
-    overflow: hidden;
+    display: none !important;
   }
   .site-main .gframe,
   .gframe { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
@@ -2381,6 +2360,21 @@ section.sec.tight > .wrap > .gframe {
   }
   #practices .practices-pin-sticky > .wrap > .gframe > .gcell {
     grid-column: 1 / -1 !important;
+  }
+
+  /* Mobile width fix: prevent pin cell / label-swap contents from forcing
+     wider-than-column layout (flex min-width: auto + nowrap words). */
+  #practices .gcell.practices-pin-cell {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden !important;
+  }
+  #practices .practices-pin-inner {
+    min-width: 0;
+  }
+  #practices .practices-label-swap,
+  #practices .practices-label-swap__viewport {
+    min-width: 0;
   }
 
   .gcell {
