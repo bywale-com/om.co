@@ -556,7 +556,7 @@ body.layout-shell {
     font-size: calc(var(--fs-sm) * 0.8);
   }
   #intro .intro-hero-gcell .t-hero {
-    font-size: calc(var(--fs-4xl) * 0.56);
+    font-size: calc(var(--fs-4xl) * 0.45486);
   }
   #intro .intro-hero-gcell .t-lead {
     font-size: calc(var(--fs-md) * 0.8);
@@ -2633,6 +2633,9 @@ section.sec.tight > .wrap > .gframe {
 
   .gcell {
     padding: 16px 18px;
+  }
+  #intro .gframe .gcell.intro-hero-gcell {
+    padding-right: calc(18px * 1.2);
   }
 
   #practices .practices-fill-media-cell {
