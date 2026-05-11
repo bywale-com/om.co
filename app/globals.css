@@ -473,6 +473,83 @@ body.layout-shell {
   border-color: rgba(10, 10, 10, 0);
 }
 
+/* Intro: desktop = unchanged flex chain; mobile = rail (eyebrow) + full-width hero grid. */
+#intro > .wrap > .intro-mobile-shell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+@media (min-width: 921px) {
+  #intro > .wrap > .intro-mobile-shell,
+  #intro > .wrap > .intro-mobile-shell > .intro-mobile-main {
+    display: contents;
+  }
+  #intro .intro-hero-eyebrow-col {
+    display: none !important;
+  }
+  #intro .intro-hero-eyebrow--in-cell {
+    display: inline;
+  }
+}
+@media (max-width: 920px) {
+  #intro .intro-hero-eyebrow--in-cell {
+    display: none !important;
+  }
+  #intro > .wrap {
+    overflow: visible;
+  }
+  #intro > .wrap > .intro-mobile-shell {
+    display: grid;
+    grid-template-columns: minmax(0, min(36vw, 168px)) minmax(0, 1fr);
+    align-items: stretch;
+    flex: 1;
+    min-height: var(--viewport-less-hdr);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #intro .intro-hero-eyebrow-col {
+    grid-column: 1;
+    min-width: 0;
+    padding: 0;
+    border-right: var(--grid-rule);
+    background: var(--paper-pure);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  /* Rail stretches to full intro height; inner sticks under header until #intro scrolls away (then #thesis). */
+  #intro .intro-hero-eyebrow-inner {
+    position: sticky;
+    top: var(--hdr-h);
+    align-self: flex-start;
+    padding: 22px 14px 22px 16px;
+    z-index: 3;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  #intro .intro-hero-eyebrow-inner .t-eyebrow {
+    max-width: 100%;
+  }
+  #intro .intro-mobile-main {
+    grid-column: 2;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+  #intro .intro-mobile-main > .gframe {
+    flex: 1;
+    min-height: var(--viewport-less-hdr);
+  }
+  /* Hero copy uses both columns of the inner 2-col gframe (default mobile span 1 was too narrow). */
+  #intro .gframe .gcell.intro-hero-gcell {
+    grid-column: span 2 !important;
+  }
+}
+
 /* ========= Thesis band: pinned left col + scrolling right (cols 2–5 move) ========= */
 .sec-thesis.sec {
   justify-content: flex-start;
@@ -1308,8 +1385,10 @@ nav.primary a:hover { text-decoration: underline; text-underline-offset: 6px; te
 }
 .hdr-mobile-drawer {
   position: fixed;
-  inset: 0;
+  left: 0;
+  right: 0;
   top: var(--hdr-h);
+  bottom: 0;
   z-index: 19;
   pointer-events: none;
   visibility: hidden;
@@ -1317,6 +1396,13 @@ nav.primary a:hover { text-decoration: underline; text-underline-offset: 6px; te
   transition:
     opacity 0.22s var(--ease),
     visibility 0.22s var(--ease);
+}
+/* Keep bar + toggle above overlay (backdrop-filter on .hdr can skew compositor order vs fixed siblings). */
+body.hdr-menu-open .hdr {
+  z-index: 100;
+}
+body.hdr-menu-open .hdr-mobile-drawer.is-open {
+  z-index: 99;
 }
 .hdr-mobile-drawer.is-open {
   pointer-events: auto;

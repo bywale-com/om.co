@@ -39,29 +39,38 @@ export default function Home() {
         {/* HERO — brand + promise (grid shell cols 2–6) */}
         <section className="sec" id="intro">
           <div className="wrap">
-            <div className="gframe rule-top">
-              <div className="gcell empty"><span className="gcorner">B</span></div>
-              <div className="gcell empty"><span className="gcorner">C</span></div>
-              <div className="gcell empty"><span className="gcorner">D</span></div>
-              <div className="gcell empty"><span className="gcorner">E</span></div>
-              <div className="gcell empty r-end"><span className="gcorner">F</span><span className="gnum" style={{ marginTop: 'auto' }}>—</span></div>
-
-              <div className="gcell empty r2"><span className="gcorner">H</span></div>
-              <div className="gcell c4 r2 r-end">
-                <span className="gnum">01</span>
-                <span className="gcorner">I</span>
-                <div className="layout-stack" style={{ alignSelf: 'stretch', marginTop: 'auto', width: '100%', gap: 'clamp(14px, 2vw, 22px)' }}>
+            <div className="intro-mobile-shell">
+              <div className="intro-hero-eyebrow-col">
+                <div className="intro-hero-eyebrow-inner">
                   <span className="t-eyebrow">{site.name}</span>
-                  <h1 className="t-hero" style={{ margin: 0 }}>{site.tagline}</h1>
-                  <p className="t-lead" style={{ margin: 0 }}>{site.lead}</p>
                 </div>
               </div>
+              <div className="intro-mobile-main">
+                <div className="gframe rule-top">
+                  <div className="gcell empty"><span className="gcorner">B</span></div>
+                  <div className="gcell empty"><span className="gcorner">C</span></div>
+                  <div className="gcell empty"><span className="gcorner">D</span></div>
+                  <div className="gcell empty"><span className="gcorner">E</span></div>
+                  <div className="gcell empty r-end"><span className="gcorner">F</span><span className="gnum" style={{ marginTop: 'auto' }}>—</span></div>
 
-              <div className="gcell empty b-end"><span className="gcorner">K</span></div>
-              <div className="gcell empty b-end"><span className="gcorner">L</span></div>
-              <div className="gcell empty b-end"><span className="gcorner">M</span></div>
-              <div className="gcell empty c2 b-end r-end">
-                <span className="gcorner">N</span>
+                  <div className="gcell empty r2"><span className="gcorner">H</span></div>
+                  <div className="gcell c4 r2 r-end intro-hero-gcell">
+                    <span className="gnum">01</span>
+                    <span className="gcorner">I</span>
+                    <div className="layout-stack" style={{ alignSelf: 'stretch', marginTop: 'auto', width: '100%', gap: 'clamp(14px, 2vw, 22px)' }}>
+                      <span className="t-eyebrow intro-hero-eyebrow--in-cell">{site.name}</span>
+                      <h1 className="t-hero" style={{ margin: 0 }}>{site.tagline}</h1>
+                      <p className="t-lead" style={{ margin: 0 }}>{site.lead}</p>
+                    </div>
+                  </div>
+
+                  <div className="gcell empty b-end"><span className="gcorner">K</span></div>
+                  <div className="gcell empty b-end"><span className="gcorner">L</span></div>
+                  <div className="gcell empty b-end"><span className="gcorner">M</span></div>
+                  <div className="gcell empty c2 b-end r-end">
+                    <span className="gcorner">N</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
