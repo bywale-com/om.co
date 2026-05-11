@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# Build / debug
+*.tsbuildinfo
+
+# Env (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Logs / runtime
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Vercel
+.vercel
+
+# Testing / coverage
+coverage/
+.nyc_output/
+
+# Misc
+*.pem
