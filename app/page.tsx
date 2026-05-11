@@ -189,16 +189,18 @@ export default function Home() {
             <div className="method-canvas">
               <div className="method-rail">
                 <div className="gcell empty"><span className="gcorner">B</span></div>
-                <div className="method-rail__rule"></div>
-                <div className="gcell">
-                  <span className="gnum">04</span>
-                  <span className="gcorner">F</span>
-                  <span className="eyebrow" style={{ marginTop: 'auto', color: 'var(--ink)', alignSelf: 'flex-start', borderBottomColor: 'var(--ink)' }}>{method.eyebrow}</span>
+                <div className="method-rail-sticky-cluster">
+                  <div className="method-rail__rule"></div>
+                  <div className="gcell">
+                    <span className="gnum">04</span>
+                    <span className="gcorner">F</span>
+                    <span className="eyebrow" style={{ marginTop: 'auto', color: 'var(--ink)', alignSelf: 'flex-start', borderBottomColor: 'var(--ink)' }}>{method.eyebrow}</span>
+                  </div>
                 </div>
               </div>
               <div className="method-main">
                 <div className="gframe">
-                  <div className="gcell c3">
+                  <div className="gcell c3" data-method-col="left">
                     <span className="gnum">04 · 0</span>
                     <span className="gcorner">C</span>
                     <p className="t-eyebrow" style={{ marginTop: '12px', marginBottom: 0 }}>{whatWeDo.eyebrow}</p>
@@ -211,7 +213,11 @@ export default function Home() {
                   <div className="gcell empty r-end"><span className="gcorner">D</span></div>
 
                   {whatWeDo.disciplines.map((d, i) => (
-                    <div key={d.title} className="gcell method-discipline-cell">
+                    <div
+                      key={d.title}
+                      className="gcell method-discipline-cell"
+                      data-method-col={i === 0 || i === 2 ? 'right' : 'left'}
+                    >
                       <span className="gnum">{String(i + 1).padStart(2, '0')}</span>
                       <span className="gcorner">{(['G', 'H', 'I'] as const)[i]}</span>
                       <p className="method-discipline-cell__title">{d.title}</p>
@@ -230,12 +236,14 @@ export default function Home() {
           <div className="wrap">
             <div className="writing-canvas writing-collapsed">
               <div className="writing-rail">
-                <div className="gcell writing-rail-lexicon-head">
-                  <span className="gnum">05</span>
-                  <span className="gcorner">A</span>
-                  <span className="eyebrow" style={{ marginTop: 'auto', color: 'var(--ink)', borderBottomColor: 'var(--ink)' }}>Lexicon</span>
+                <div className="writing-lexicon-sticky-cluster">
+                  <div className="gcell writing-rail-lexicon-head">
+                    <span className="gnum">05</span>
+                    <span className="gcorner">A</span>
+                    <span className="eyebrow" style={{ marginTop: 'auto', color: 'var(--ink)', borderBottomColor: 'var(--ink)' }}>Lexicon</span>
+                  </div>
+                  <div className="writing-rail__rule"></div>
                 </div>
-                <div className="writing-rail__rule"></div>
                 <div className="gcell writing-rail-lexicon-media">
                   <div className="writing-rail-lexicon-media__fill" aria-hidden="true">
                     <img
@@ -252,22 +260,24 @@ export default function Home() {
               </div>
               <div className="writing-main">
                 <div className="gframe writing-lexicon-frame" style={{ gridAutoRows: 'auto' }}>
-                  <div className="gcell c3 r-end methodology-lexicon-intro" style={{ minHeight: 0 }}>
-                    <span className="gnum">05 · 0</span>
-                    <span className="gcorner">B</span>
-                    <p className="gbody" style={{ marginTop: '12px', maxWidth: '62ch' }}>
-                      A shared vocabulary for the work — honest labels aligned with what the methodology actually does. No overclaiming.
-                    </p>
-                  </div>
-                  <div className="gcell c3 r-end methodology-lexicon-grid" style={{ gridColumn: '1 / -1', minHeight: 0 }}>
-                    <dl className="methodology-glossary">
-                      {methodologyTerms.map((row) => (
-                        <div key={row.term} className="methodology-glossary__row">
-                          <dt>{row.term}</dt>
-                          <dd>{row.definition}</dd>
-                        </div>
-                      ))}
-                    </dl>
+                  <div className="gcell c3 r-end methodology-lexicon-main" style={{ minHeight: 0 }}>
+                    <div className="methodology-lexicon-intro">
+                      <span className="gnum">05 · 0</span>
+                      <span className="gcorner">B</span>
+                      <p className="gbody" style={{ marginTop: '12px', maxWidth: '62ch' }}>
+                        A shared vocabulary for the work — honest labels aligned with what the methodology actually does. No overclaiming.
+                      </p>
+                    </div>
+                    <div className="methodology-lexicon-grid" style={{ minHeight: 0 }}>
+                      <dl className="methodology-glossary">
+                        {methodologyTerms.map((row) => (
+                          <div key={row.term} className="methodology-glossary__row">
+                            <dt>{row.term}</dt>
+                            <dd>{row.definition}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -448,34 +458,38 @@ export default function Home() {
 
         <section className="sec" id="engage">
           <div className="wrap">
-            <div className="gframe">
-              <div className="gcell empty"><span className="gcorner">B</span></div>
-              <div className="gcell c3">
-                <span className="gnum">06 · 0</span>
-                <span className="gcorner">C</span>
-                <p className="t-eyebrow" style={{ marginTop: '12px' }}>{engage.eyebrow}</p>
-              </div>
-              <div className="gcell empty r-end"><span className="gcorner">D</span></div>
+            <div className="gframe engage-gframe">
+              <div className="engage-mobile-row1">
+                <div className="gcell empty"><span className="gcorner">B</span></div>
+                <div className="gcell c3 engage-chrome-cell">
+                  <span className="gnum">06 · 0</span>
+                  <span className="gcorner">C</span>
+                  <p className="t-eyebrow" style={{ marginTop: '12px' }}>{engage.eyebrow}</p>
+                </div>
+                <div className="gcell empty r-end"><span className="gcorner">D</span></div>
 
-              <div className="gcell empty"><span className="gcorner">F</span></div>
-              <div className="gcell engage-rail-cell">
-                <span className="gnum">·</span><span className="gcorner">G</span>
-                <h2 className="we-believe__title engage-rail-cell__title">{method.title}</h2>
-                {method.body.map((para, i) => (
-                  <p key={i} className="gbody" style={{ margin: i === 0 ? '12px 0 0' : '14px 0 0' }}>
-                    {para}
-                  </p>
-                ))}
+                <div className="gcell empty"><span className="gcorner">F</span></div>
+                <div className="gcell engage-rail-cell engage-rail-lead">
+                  <span className="gnum">·</span><span className="gcorner">G</span>
+                  <h2 className="we-believe__title engage-rail-cell__title">{method.title}</h2>
+                  {method.body.map((para, i) => (
+                    <p key={i} className="gbody" style={{ margin: i === 0 ? '12px 0 0' : '14px 0 0' }}>
+                      {para}
+                    </p>
+                  ))}
+                </div>
               </div>
-              <div className="gcell engage-rail-cell">
-                <span className="gnum">·</span><span className="gcorner">H</span>
-                <h2 className="we-believe__title engage-rail-cell__title">{engage.titleFit}</h2>
-                <p className="gbody" style={{ marginTop: '12px' }}>{engage.bodyFit}</p>
-              </div>
-              <div className="gcell engage-rail-cell">
-                <span className="gnum">·</span><span className="gcorner">I</span>
-                <h2 className="we-believe__title engage-rail-cell__title">{engage.titleNot}</h2>
-                <p className="gbody" style={{ marginTop: '12px' }}>{engage.bodyNot}</p>
+              <div className="engage-mobile-row2">
+                <div className="gcell engage-rail-cell engage-rail-fit">
+                  <span className="gnum">·</span><span className="gcorner">H</span>
+                  <h2 className="we-believe__title engage-rail-cell__title">{engage.titleFit}</h2>
+                  <p className="gbody" style={{ marginTop: '12px' }}>{engage.bodyFit}</p>
+                </div>
+                <div className="gcell engage-rail-cell engage-rail-not">
+                  <span className="gnum">·</span><span className="gcorner">I</span>
+                  <h2 className="we-believe__title engage-rail-cell__title">{engage.titleNot}</h2>
+                  <p className="gbody" style={{ marginTop: '12px' }}>{engage.bodyNot}</p>
+                </div>
               </div>
             </div>
           </div>

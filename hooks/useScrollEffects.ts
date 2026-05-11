@@ -219,6 +219,60 @@ export default function useScrollEffects() {
       }
     }
 
+    /** Mobile-only thesis gutter pin:
+     *  Pin immediately on thesis entry, then unpin when #method approaches the top of viewport.
+     */
+    function wireThesisMobilePinUntilMethod(lenisInstance: Lenis | null) {
+      var thesis = document.getElementById('thesis')
+      var method = document.getElementById('method')
+      if (!thesis || !method) return
+
+      var thesisEl = thesis as HTMLElement
+      var methodEl = method as HTMLElement
+
+      var mqMobile = window.matchMedia('(max-width: 920px)')
+      function tick() {
+        if (!mqMobile.matches) {
+          thesisEl.classList.remove('thesis-pin--mobile-active')
+          return
+        }
+
+        var vh = window.innerHeight || document.documentElement.clientHeight || 600
+        var thesisR = thesisEl.getBoundingClientRect()
+        var methodR = methodEl.getBoundingClientRect()
+
+        // Pin only after the user has reached thesis (top crosses into view from below).
+        var thesisEntered = thesisR.top < vh
+        // Unpin when #method approaches the top of the viewport (tune 0.08–0.15).
+        var methodBand = vh * 0.1
+        var methodNotYetNearTop = methodR.top > methodBand
+
+        var shouldPin = thesisEntered && methodNotYetNearTop
+
+        if (shouldPin) thesisEl.classList.add('thesis-pin--mobile-active')
+        else thesisEl.classList.remove('thesis-pin--mobile-active')
+      }
+
+      tick()
+      window.addEventListener('scroll', tick, { passive: true, signal: sig })
+      window.addEventListener('resize', tick, { signal: sig })
+      window.addEventListener('wheel', tick, { passive: true, signal: sig })
+      document.addEventListener('touchmove', tick, { passive: true, signal: sig })
+      window.addEventListener(
+        'keydown',
+        function (e) {
+          var k = e.key
+          if (k === ' ' || k === 'PageDown' || k === 'PageUp' || k === 'End' || k === 'Home' || k === 'ArrowDown' || k === 'ArrowUp') {
+            tick()
+          }
+        },
+        { capture: true, signal: sig }
+      )
+      if (lenisInstance) {
+        lenisInstance.on('scroll', tick)
+      }
+    }
+
     function wireWritingShrink(lenisInstance: Lenis | null) {
       var sec = document.getElementById('writing')
       var canvas = sec && sec.querySelector('.writing-canvas')
@@ -287,6 +341,54 @@ export default function useScrollEffects() {
       tick()
       window.addEventListener('scroll', tick, { passive: true, signal: sig })
       window.addEventListener('resize', tick, { signal: sig })
+      if (lenisInstance) {
+        lenisInstance.on('scroll', tick)
+      }
+    }
+
+    /** Mobile-only: two-column parallax on right discipline cells inside #method. */
+    function wireMethodMobileMainParallax(lenisInstance: Lenis | null) {
+      var sec = document.getElementById('method')
+      if (!sec) return
+      const method = sec as HTMLElement
+      var mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)')
+
+      function tick() {
+        var w = window.innerWidth || document.documentElement.clientWidth || 9999
+        var rights = method.querySelectorAll('[data-method-col="right"]')
+        function clearTransforms() {
+          rights.forEach(function (el) {
+            ;(el as HTMLElement).style.transform = ''
+          })
+        }
+        if (w > 920) {
+          clearTransforms()
+          return
+        }
+        if (mqReduce.matches) {
+          clearTransforms()
+          return
+        }
+        var r = method.getBoundingClientRect()
+        var vh = window.innerHeight || document.documentElement.clientHeight || 600
+        if (r.bottom <= 0 || r.top >= vh) {
+          rights.forEach(function (el) {
+            ;(el as HTMLElement).style.transform = 'translateY(0px)'
+          })
+          return
+        }
+        var scrollInto = Math.max(0, Math.min(vh - r.top, r.height + vh * 0.5))
+        var y = -scrollInto * 0.15
+        rights.forEach(function (el) {
+          ;(el as HTMLElement).style.transform = 'translateY(' + y.toFixed(2) + 'px)'
+        })
+      }
+
+      tick()
+      window.addEventListener('scroll', tick, { passive: true, signal: sig })
+      window.addEventListener('resize', tick, { signal: sig })
+      window.addEventListener('wheel', tick, { passive: true, signal: sig })
+      document.addEventListener('touchmove', tick, { passive: true, signal: sig })
       if (lenisInstance) {
         lenisInstance.on('scroll', tick)
       }
@@ -376,11 +478,13 @@ export default function useScrollEffects() {
     wireRailFromScroll(lenis)
     wireRevealOnScroll(lenis)
     wireThesisPinSlides(lenis)
+    wireThesisMobilePinUntilMethod(lenis)
     wirePracticesC3Video()
     wirePracticesLabelSwap(lenis)
     wireSiteRailVideo()
     wirePracticesNewsCarousel()
     wireMethodRail(lenis)
+    wireMethodMobileMainParallax(lenis)
     wireWritingShrink(lenis)
     wireFooterBrandShrink(lenis)
 

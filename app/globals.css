@@ -1528,12 +1528,17 @@ section.sec.tight > .wrap > .gframe {
 }
 /* Row 1 = eyebrow strip (auto). Row 2 = rail cells grow to gframe bottom — verticals meet bottom rule (cf. #method) */
 @media (min-width: 921px) {
-  #engage > .wrap > .gframe {
+  #engage > .wrap > .engage-gframe {
     grid-auto-rows: auto minmax(0, 1fr);
     align-items: stretch;
   }
-  #engage > .wrap > .gframe > .gcell {
+  #engage > .wrap > .engage-gframe .gcell {
     align-self: stretch;
+  }
+  /* Mobile row wrappers are layout-transparent on large screens (same 6-col grid as flat DOM). */
+  #engage > .wrap > .engage-gframe .engage-mobile-row1,
+  #engage > .wrap > .engage-gframe .engage-mobile-row2 {
+    display: contents;
   }
 }
 
@@ -1813,8 +1818,14 @@ section.sec.tight > .wrap > .gframe {
   padding: 4px 0 2px;
   margin: 0;
   box-sizing: border-box;
-  scrollbar-width: thin;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+}
+.site-footer__newsroom-viewport::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 .site-footer__newsroom-card {
   flex: 0 0 min(300px, calc(100% - 8px));
@@ -2012,6 +2023,27 @@ section.sec.tight > .wrap > .gframe {
   background: var(--ink);
   width: 100%;
 }
+/* Desktop: wrapper is transparent to flex layout; mobile: sticky lexicon chrome cluster. */
+.writing-lexicon-sticky-cluster {
+  display: contents;
+}
+/* Lexicon main: one grid cell wraps intro + glossary so mobile `position: sticky`
+   on the intro spans the full stack (sticky is limited to the grid item’s box). */
+.methodology-lexicon-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.methodology-lexicon-intro {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 0;
+}
+.methodology-lexicon-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
 .writing-main {
   flex: 1 1 auto;
   min-width: 0;
@@ -2050,6 +2082,7 @@ section.sec.tight > .wrap > .gframe {
   flex-direction: column;
   overflow: hidden;
   border-right: var(--grid-rule);
+  background: var(--paper-pure);
   transition:
     flex-basis var(--rail-dur) var(--rail-ease),
     max-width var(--rail-dur) var(--rail-ease),
@@ -2069,12 +2102,20 @@ section.sec.tight > .wrap > .gframe {
   flex: 1;
   border-right: none;
   border-bottom: none;
+  background: var(--paper-pure);
 }
 .method-rail__rule {
   flex: 0 0 2px;
   min-height: 2px;
   background: var(--ink);
   width: 100%;
+}
+/* Desktop: transparent to flex layout; mobile: sticky Method rule + eyebrow only (B scrolls away). */
+.method-rail-sticky-cluster {
+  display: contents;
+}
+#method .method-rail-sticky-cluster > .gcell {
+  border-bottom: var(--grid-rule);
 }
 .method-main {
   flex: 1 1 auto;
@@ -2167,6 +2208,34 @@ section.sec.tight > .wrap > .gframe {
   .gframe { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
   .gframe .gcell { grid-column: span 1 !important; grid-row: span 1 !important; min-height: 120px; }
   .gframe .gcell.c6, .gframe .gcell.c5 { grid-column: span 2 !important; }
+  /* #engage (mobile): two stacked 2-col rows; pin chrome in row 1 until that row scrolls away (row 2 / H·I). */
+  #engage > .wrap {
+    overflow: visible;
+  }
+  #engage > .wrap > .engage-gframe {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    overflow: visible;
+    gap: 0;
+  }
+  #engage .engage-mobile-row1,
+  #engage .engage-mobile-row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    align-items: stretch;
+    min-height: 0;
+  }
+  #engage .engage-mobile-row1 > .engage-chrome-cell {
+    position: sticky;
+    top: var(--hdr-h);
+    z-index: 10;
+    align-self: start;
+    background: var(--paper-pure);
+    overflow: visible !important;
+  }
   nav.primary { display: none; }
   .thesis-split {
     grid-template-columns: 1fr;
@@ -2189,6 +2258,37 @@ section.sec.tight > .wrap > .gframe {
     top: auto;
     min-height: 0;
     padding: 22px 24px 28px;
+  }
+  /*
+    Mobile thesis pin: sticky only works if the pin column is as tall as the thesis block.
+    Default stack = pin row is short → sticky never "runs". When active, split into a narrow
+    rail (full height) + main column (lorem + flow stacked).
+  */
+  #thesis.thesis-pin--mobile-active .thesis-split {
+    grid-template-columns: minmax(0, min(36vw, 160px)) 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: stretch;
+  }
+  #thesis.thesis-pin--mobile-active .thesis-pin-col {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    border-bottom: none;
+    border-right: var(--grid-rule);
+    min-width: 0;
+  }
+  #thesis.thesis-pin--mobile-active .thesis-lorem-col {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  #thesis.thesis-pin--mobile-active .thesis-flow-col {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+  }
+  #thesis.thesis-pin--mobile-active .thesis-pin-inner {
+    position: sticky;
+    top: var(--hdr-h);
+    align-self: start;
   }
   .practices-pin-inner {
     position: relative;
@@ -2312,17 +2412,91 @@ section.sec.tight > .wrap > .gframe {
   }
 
   /* Method / Writing: stack rail above content instead of squeezed side-by-side */
+  /* #method: sticky rail needs a non-clipping canvas (desktop keeps overflow: hidden). */
+  #method .method-canvas {
+    overflow: visible;
+  }
+  /* Discipline rail cards: 4× default mobile cell padding-top (see `.gcell` below = 16px). */
+  #method .method-discipline-cell {
+    padding-top: calc(16px * 4);
+  }
   .method-canvas,
   .writing-canvas {
     flex-direction: column;
   }
-  .method-rail,
+  /* Lift rail children to canvas so empty B scrolls; only cluster sticks under header. */
+  #method .method-rail {
+    display: contents;
+    overflow: visible;
+  }
+  #method .method-rail > .gcell.empty {
+    display: none !important;
+  }
+  #method .method-rail-sticky-cluster {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    align-self: stretch;
+    width: 100%;
+    position: sticky;
+    top: var(--hdr-h);
+    z-index: 10;
+    background: var(--paper-pure);
+  }
+  #method .method-rail-sticky-cluster .method-rail__rule {
+    flex: 0 0 2px;
+  }
+  #method .method-rail-sticky-cluster > .gcell {
+    flex: 0 0 auto;
+    /* Base rule uses var(--grid-rule) (2px); mobile adds another 2px. */
+    border-bottom: 4px solid var(--ink);
+  }
   .writing-rail {
     flex: 0 0 auto !important;
     width: 100% !important;
     max-width: none !important;
     border-right: none;
     border-bottom: var(--grid-rule);
+    overflow: visible;
+    background: var(--paper-pure);
+  }
+  /* #writing: rail wrapper must not clip sticky; `contents` lifts children to
+     `.writing-canvas` so lexicon chrome stays sticky through main + glossary. */
+  #writing .writing-rail {
+    display: contents;
+  }
+  /* #writing: let sticky lexicon chrome use full section scroll range */
+  #writing .writing-canvas {
+    overflow: visible;
+  }
+  #writing .writing-main,
+  #writing .writing-lexicon-frame {
+    overflow: visible;
+  }
+  /* Override `.gframe .gcell { grid-column: span 1 !important }` — main band stays full width. */
+  #writing .methodology-lexicon-main {
+    grid-column: 1 / -1 !important;
+    overflow: visible;
+  }
+  #writing .writing-lexicon-sticky-cluster {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    align-self: stretch;
+    position: sticky;
+    top: var(--hdr-h);
+    z-index: 12;
+    background: var(--paper-pure);
+    border-bottom: var(--grid-rule);
+  }
+  #writing .writing-lexicon-sticky-cluster .writing-rail-lexicon-head {
+    flex: 0 0 auto;
+  }
+  #writing .writing-lexicon-sticky-cluster .writing-rail__rule {
+    flex: 0 0 2px;
+  }
+  #writing .writing-rail .gcell {
+    background: var(--paper-pure);
   }
   .method-rail .gcell,
   .writing-rail .gcell {
@@ -2341,6 +2515,7 @@ section.sec.tight > .wrap > .gframe {
 
   /* Scroll-driven rail collapse fights stacked layout — keep rails readable */
   .method-canvas.method-collapsed .method-rail,
+  .method-canvas.method-collapsed .method-rail-sticky-cluster,
   .writing-canvas.writing-collapsed .writing-rail {
     flex-basis: auto !important;
     width: 100% !important;
@@ -2348,6 +2523,16 @@ section.sec.tight > .wrap > .gframe {
     opacity: 1 !important;
     pointer-events: auto !important;
     border-right-width: 0 !important;
+  }
+  .method-canvas.method-collapsed .method-rail-sticky-cluster {
+    position: sticky !important;
+    top: var(--hdr-h);
+    z-index: 10;
+  }
+
+  /* Method mobile parallax: transformed cells need visible overflow */
+  #method .method-main [data-method-col='right'] {
+    overflow: visible;
   }
 
   #practices.sec {
