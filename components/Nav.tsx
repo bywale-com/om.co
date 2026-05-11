@@ -1,8 +1,55 @@
 'use client'
 
-import { useEffect, useId, useState } from 'react'
+import { useId, useLayoutEffect, useRef, useState } from 'react'
+
+/** Scroll lock without `overflow: hidden` on body — that breaks `position: sticky` on `.hdr`. */
+function applyScrollLock(scrollLock: { active: boolean; y: number }) {
+  const y = window.scrollY || document.documentElement.scrollTop || 0
+  scrollLock.active = true
+  scrollLock.y = y
+  document.body.style.position = 'fixed'
+  document.body.style.top = `-${y}px`
+  document.body.style.left = '0'
+  document.body.style.right = '0'
+  document.body.style.width = '100%'
+}
+
+function releaseScrollLock(scrollLock: { active: boolean; y: number }) {
+  if (!scrollLock.active) {
+    document.body.style.position = ''
+    document.body.style.top = ''
+    document.body.style.left = ''
+    document.body.style.right = ''
+    document.body.style.width = ''
+    return
+  }
+  const y = scrollLock.y
+  scrollLock.active = false
+  scrollLock.y = 0
+  document.body.style.position = ''
+  document.body.style.top = ''
+  document.body.style.left = ''
+  document.body.style.right = ''
+  document.body.style.width = ''
+
+  const lenis = typeof window !== 'undefined' ? window.__omcodaLenis : undefined
+  if (lenis) lenis.stop()
+
+  try {
+    window.scrollTo({ left: 0, top: y, behavior: 'instant' })
+  } catch {
+    window.scrollTo(0, y)
+  }
+
+  if (lenis) {
+    lenis.scrollTo(y, { immediate: true, force: true })
+    lenis.start()
+  }
+}
 
 const NAV_LINKS = [
+  { href: '#intro', label: 'Home' },
+  { href: '#thesis', label: 'Thesis' },
   { href: '#method', label: 'Method' },
   { href: '#writing', label: 'Writing' },
   { href: '#practices', label: 'Practices' },
@@ -12,22 +59,24 @@ const NAV_LINKS = [
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const panelId = useId()
+  const scrollLockRef = useRef({ active: false, y: 0 })
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!menuOpen) {
       document.body.classList.remove('hdr-menu-open')
+      releaseScrollLock(scrollLockRef.current)
       return
     }
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') setMenuOpen(false)
     }
-    document.addEventListener('keydown', onKey)
+    applyScrollLock(scrollLockRef.current)
     document.body.classList.add('hdr-menu-open')
-    document.body.style.overflow = 'hidden'
+    document.addEventListener('keydown', onKey)
     return () => {
       document.removeEventListener('keydown', onKey)
       document.body.classList.remove('hdr-menu-open')
-      document.body.style.overflow = ''
+      releaseScrollLock(scrollLockRef.current)
     }
   }, [menuOpen])
 

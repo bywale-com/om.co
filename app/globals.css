@@ -1392,10 +1392,13 @@ nav.primary a:hover { text-decoration: underline; text-underline-offset: 6px; te
 body.hdr-menu-open .hdr {
   z-index: 100;
 }
-body.hdr-menu-open .hdr-mobile-drawer.is-open {
-  z-index: 99;
-}
+/*
+  Drawer must stack above .site-main on the first paint with .is-open.
+  body.hdr-menu-open is applied in useLayoutEffect — if z-index depended only on that,
+  one frame at z-index:19 left the panel under following DOM siblings (menu looked empty).
+*/
 .hdr-mobile-drawer.is-open {
+  z-index: 99;
   pointer-events: auto;
   visibility: visible;
   opacity: 1;
@@ -1403,6 +1406,7 @@ body.hdr-menu-open .hdr-mobile-drawer.is-open {
 .hdr-mobile-drawer__backdrop {
   position: absolute;
   inset: 0;
+  z-index: 0;
   margin: 0;
   background: rgba(10, 10, 10, 0.4);
   border: none;
@@ -1411,6 +1415,7 @@ body.hdr-menu-open .hdr-mobile-drawer.is-open {
 }
 .hdr-mobile-drawer__nav {
   position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: stretch;

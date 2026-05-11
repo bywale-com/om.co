@@ -2,6 +2,13 @@
 import Lenis from 'lenis'
 import { useEffect } from 'react'
 
+declare global {
+  interface Window {
+    /** Set while Lenis runs — Nav uses on menu close only (sync scroll restore). */
+    __omcodaLenis?: Lenis
+  }
+}
+
 export default function useScrollEffects() {
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -455,6 +462,8 @@ export default function useScrollEffects() {
     }
     function updateRailFromScroll(y?: number) {
       if (!canvas) return
+      /* Nav scroll-lock (body position:fixed) zeros window.scrollY — would falsely expand the site rail. */
+      if (document.body.classList.contains('hdr-menu-open')) return
       var scrollY = y != null ? y : (window.scrollY || document.documentElement.scrollTop || 0)
       var t = railThresholds()
       if (scrollY >= t.collapse) {
@@ -488,6 +497,7 @@ export default function useScrollEffects() {
         touchMultiplier: 1.4,
         autoRaf: true,
       })
+      window.__omcodaLenis = lenis
     }
 
     wireRailFromScroll(lenis)
@@ -529,6 +539,7 @@ export default function useScrollEffects() {
 
     return () => {
       ac.abort()
+      delete window.__omcodaLenis
       if (lenis) lenis.destroy()
     }
   }, [])
