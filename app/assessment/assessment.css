@@ -1,0 +1,550 @@
+/* Practice assessment — standalone route; tokens from globals (:root).
+   All layout rules scoped under .asm-page or #asm-assessment-hero so home is unchanged. */
+
+.asm-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}
+
+/* Same chrome as site `.hdr` / `.hdr-inner`, but logo only — aligned to inline end (right in LTR). */
+.asm-page > .hdr .hdr-inner {
+  justify-content: flex-end;
+}
+
+.asm-main {
+  flex: 1;
+}
+
+.asm-split {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Pinned left: home intro two-column hero while the form scrolls on the right. */
+.asm-split__left {
+  flex: 0 0 50%;
+  position: sticky;
+  top: var(--hdr-h);
+  height: calc(100vh - var(--hdr-h));
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--paper-pure);
+  overflow: auto;
+}
+
+.asm-split__left .asm-hero-sec {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.asm-split__left .asm-hero-sec > .wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.asm-split__right {
+  flex: 0 0 50%;
+  min-height: calc(100vh - var(--hdr-h));
+  padding: var(--sp-8) var(--sp-8) var(--sp-9);
+  background: var(--paper-pure);
+}
+
+/* ----- Assessment hero: mirrors #intro mobile two-column shell (scoped, always active). ----- */
+
+/* Tame global `section.sec` min-height / centering so the intro shell fills the pinned column. */
+.asm-split__left #asm-assessment-hero.sec {
+  min-height: 0;
+  flex: 1;
+  justify-content: flex-start;
+}
+
+.asm-split__left #asm-assessment-hero.sec > .wrap {
+  justify-content: flex-start;
+  min-height: 0;
+}
+
+#asm-assessment-hero {
+  min-height: 0;
+  flex: 1;
+}
+
+#asm-assessment-hero > .wrap {
+  overflow: visible;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#asm-assessment-hero > .wrap > .intro-mobile-shell {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, min(36vw, 160px)) minmax(0, 1fr);
+  align-items: stretch;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+  border-left: 3px solid var(--ink);
+  border-right: 3px solid var(--ink);
+}
+
+#asm-assessment-hero .intro-hero-eyebrow-col {
+  grid-column: 1;
+  min-width: 0;
+  padding: 0;
+  border-left: none;
+  border-right: var(--grid-rule);
+  background: var(--paper-pure);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#asm-assessment-hero .intro-hero-eyebrow-inner {
+  position: sticky;
+  top: var(--hdr-h);
+  align-self: flex-start;
+  padding: 22px 14px 22px 16px;
+  z-index: 3;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#asm-assessment-hero .intro-mobile-main {
+  grid-column: 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  border-left: none;
+}
+
+/* Mobile: full intro gframe (unchanged layout). */
+#asm-assessment-hero .asm-hero-gframe-mobile {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#asm-assessment-hero .asm-hero-gframe-mobile > .gframe {
+  flex: 1;
+  min-height: min(var(--viewport-less-hdr), 100%);
+  border-left: none;
+}
+
+/* Desktop: no gframe — full-width headline + lead in column 2. */
+#asm-assessment-hero .asm-hero-main-desktop {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#asm-assessment-hero .asm-hero-desktop-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 0;
+  min-width: 0;
+}
+
+#asm-assessment-hero .asm-hero-desktop-meta {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+
+#asm-assessment-hero .asm-hero-desktop-copy {
+  max-width: none;
+}
+
+#asm-assessment-hero .asm-hero-desktop-copy .t-hero,
+#asm-assessment-hero .asm-hero-desktop-copy .t-lead {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 960px) {
+  #asm-assessment-hero .asm-hero-gframe-mobile {
+    display: none !important;
+  }
+
+  #asm-assessment-hero .asm-hero-main-desktop {
+    display: flex !important;
+    padding: var(--sp-5) var(--sp-6) var(--sp-7) var(--sp-4);
+    box-sizing: border-box;
+  }
+
+  #asm-assessment-hero .asm-hero-desktop-copy .t-hero {
+    font-size: clamp(1.35rem, 2.2vw, var(--fs-2xl));
+    line-height: var(--lh-snug);
+  }
+
+  #asm-assessment-hero .asm-hero-desktop-copy .t-lead {
+    font-size: clamp(var(--fs-sm), 1.25vw, var(--fs-lg));
+    line-height: var(--lh-loose);
+  }
+
+  #asm-assessment-hero .intro-hero-eyebrow-inner .t-eyebrow {
+    font-size: var(--fs-sm);
+  }
+}
+
+@media (max-width: 959px) {
+  #asm-assessment-hero .asm-hero-main-desktop {
+    display: none !important;
+  }
+}
+
+#asm-assessment-hero .gframe .gcell.intro-hero-gcell {
+  grid-column: span 2 !important;
+}
+
+#asm-assessment-hero .intro-hero-eyebrow-inner .t-eyebrow {
+  max-width: 100%;
+  font-size: calc(var(--fs-sm) * 0.8);
+}
+
+#asm-assessment-hero .intro-hero-gcell .t-hero {
+  font-size: calc(var(--fs-4xl) * 0.45486);
+}
+
+#asm-assessment-hero .intro-hero-gcell .t-lead {
+  font-size: calc(var(--fs-md) * 0.8);
+}
+
+#asm-assessment-hero .asm-hero-gframe-mobile > .gframe.rule-top {
+  border-color: rgba(10, 10, 10, 0);
+}
+
+#asm-assessment-hero .intro-hero-eyebrow--in-cell {
+  display: none !important;
+}
+
+.asm-form__title {
+  font-family: var(--font-display);
+  font-size: clamp(var(--fs-xl), 3vw, var(--fs-3xl));
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tr-display);
+  line-height: var(--lh-tight);
+  color: var(--ink);
+  margin: 0 0 var(--sp-3);
+}
+
+.asm-form__subtitle {
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  color: var(--mute-3);
+  line-height: var(--lh-loose);
+  max-width: 42ch;
+  margin: 0 0 var(--sp-7);
+}
+
+.asm-progress {
+  position: relative;
+  height: 3px;
+  background: rgba(10, 10, 10, 0.1);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.asm-progress__bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background: var(--ok);
+  border-radius: var(--radius-sm);
+  transition: width 0.35s ease;
+}
+
+.asm-progress__label {
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tr-tight);
+  color: var(--mute-3);
+}
+
+.asm-form__questions {
+  margin-top: var(--sp-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-7);
+}
+
+.asm-question {
+  border: none;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.asm-question__label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tr-tight);
+  line-height: var(--lh-normal);
+  color: var(--ink);
+  margin-bottom: var(--sp-3);
+}
+
+.asm-question__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper-pure);
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0;
+  margin-right: var(--sp-2);
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+  flex-shrink: 0;
+}
+
+.asm-question__hint {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+  color: var(--mute-3);
+}
+
+.asm-question__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.asm-option {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1.5px solid rgba(10, 10, 10, 0.12);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease;
+  user-select: none;
+  font-family: var(--font-body);
+}
+
+.asm-option:hover {
+  border-color: var(--ink);
+  background: var(--ok-bg);
+}
+
+.asm-option--selected {
+  border-color: var(--ink);
+  background: var(--mute-1);
+}
+
+.asm-option__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.asm-option__check {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  border: 1.5px solid rgba(10, 10, 10, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.asm-option--checkbox .asm-option__check {
+  border-radius: var(--radius-md);
+}
+
+.asm-option--selected .asm-option__check {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.asm-option--selected .asm-option__check::after {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--paper-pure);
+}
+
+.asm-option--selected.asm-option--checkbox .asm-option__check::after {
+  width: 7px;
+  height: 4px;
+  border-radius: 0;
+  background: transparent;
+  border-left: 2px solid var(--paper-pure);
+  border-bottom: 2px solid var(--paper-pure);
+  transform: rotate(-45deg) translateY(-1px);
+}
+
+.asm-option__text {
+  font-size: var(--fs-md);
+  line-height: var(--lh-normal);
+  color: var(--ink);
+}
+
+.asm-form__footer {
+  margin-top: var(--sp-8);
+  padding-bottom: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-3);
+}
+
+.asm-submit {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--sp-3) var(--sp-6);
+  background: var(--ink);
+  color: var(--paper-pure);
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tr-tight);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.asm-submit:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.asm-submit:not(:disabled):hover {
+  background: var(--ink-soft);
+}
+
+.asm-form__remaining {
+  font-size: var(--fs-sm);
+  color: var(--mute-3);
+}
+
+.asm-form__error {
+  font-size: var(--fs-sm);
+  color: var(--danger);
+}
+
+.asm-result {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - var(--hdr-h));
+  gap: var(--sp-4);
+}
+
+.asm-result__score-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+}
+
+.asm-result__score {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 12vw, var(--fs-5xl));
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tr-display);
+  line-height: 1;
+  color: var(--ink);
+}
+
+.asm-result__denom {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  color: var(--mute-3);
+}
+
+.asm-result__tier {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tr-bar);
+  text-transform: uppercase;
+  color: var(--ok);
+}
+
+.asm-result__message {
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  line-height: var(--lh-loose);
+  color: var(--ink);
+  max-width: 38ch;
+}
+
+@media (max-width: 959px) {
+  .asm-split {
+    flex-direction: column;
+  }
+
+  .asm-split__left {
+    position: relative;
+    top: auto;
+    flex: none;
+    width: 100%;
+    height: auto;
+    min-height: min(72svh, 560px);
+    max-height: none;
+  }
+
+  .asm-split__right {
+    flex: none;
+    width: 100%;
+    min-height: auto;
+    padding: var(--sp-7) var(--sp-4) var(--sp-9);
+  }
+
+  .asm-result {
+    min-height: auto;
+    padding: var(--sp-7) 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .asm-progress__bar {
+    transition: none;
+  }
+
+  .asm-option {
+    transition: none;
+  }
+
+  .asm-submit {
+    transition: none;
+  }
+}

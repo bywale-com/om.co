@@ -429,7 +429,9 @@ body.layout-shell {
     border-left-width 0.45s var(--rail-ease),
     border-right-width 0.45s var(--rail-ease);
 }
-.site-canvas.rail-collapsed .site-rail {
+/* rail-load-intro: one-shot home load — same retracted look as scroll collapse, then JS removes class to animate open. */
+.site-canvas.rail-collapsed .site-rail,
+.site-canvas.rail-load-intro .site-rail {
   flex-basis: 0;
   width: 0;
   max-width: 0;

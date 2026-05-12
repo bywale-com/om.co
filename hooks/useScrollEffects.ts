@@ -500,7 +500,28 @@ export default function useScrollEffects() {
       window.__omcodaLenis = lenis
     }
 
+    /* First paint must include .rail-load-intro (see page.tsx) so the rail has a committed "from" state; effect-only add runs too late for CSS transitions. */
+    if (canvas && reduceMotion) {
+      canvas.classList.remove('rail-load-intro')
+    }
+
+    var railLoadIntroRafIds: number[] = []
     wireRailFromScroll(lenis)
+    if (canvas && !reduceMotion) {
+      var idA = requestAnimationFrame(function () {
+        var idB = requestAnimationFrame(function () {
+          var idC = requestAnimationFrame(function () {
+            if (sig.aborted) return
+            if (!canvas || !document.contains(canvas)) return
+            canvas.classList.remove('rail-load-intro')
+            updateRailFromScroll(scrollYUniversal(lenis))
+          })
+          railLoadIntroRafIds.push(idC)
+        })
+        railLoadIntroRafIds.push(idB)
+      })
+      railLoadIntroRafIds.push(idA)
+    }
     wireRevealOnScroll(lenis)
     wireThesisPinSlides(lenis)
     wireThesisMobilePinUntilMethod(lenis)
@@ -538,6 +559,10 @@ export default function useScrollEffects() {
     )
 
     return () => {
+      railLoadIntroRafIds.forEach(function (id) {
+        cancelAnimationFrame(id)
+      })
+      if (canvas) canvas.classList.remove('rail-load-intro')
       ac.abort()
       delete window.__omcodaLenis
       if (lenis) lenis.destroy()

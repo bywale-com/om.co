@@ -16,7 +16,7 @@ export default function Home() {
   useScrollEffects()
 
   return (
-    <div className="site-canvas">
+    <div className="site-canvas rail-load-intro">
       <aside className="site-rail" aria-hidden="true">
         <div className="site-rail__media">
           <div className="site-rail__media-fill">

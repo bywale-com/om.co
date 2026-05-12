@@ -1,10 +1,23 @@
 'use client'
 
-import { useCallback, useRef } from 'react'
+import { useCallback, useId, useRef } from 'react'
 import { footer, newsroom, newsletter } from '@/lib/siteCopy'
 
-export default function Footer() {
+/** When true, in-page anchors like `#method` become `/#method` so they resolve from non-home routes. */
+function resolveFooterHref(href: string, linkHome: boolean | undefined) {
+  if (linkHome && href.startsWith('#') && href.length > 1) {
+    return `/${href}`
+  }
+  return href
+}
+
+type FooterProps = {
+  linkHome?: boolean
+}
+
+export default function Footer({ linkHome }: FooterProps) {
   const newsroomScrollerRef = useRef<HTMLDivElement>(null)
+  const emailFieldId = useId()
 
   const scrollNewsroom = useCallback((dir: number) => {
     const root = newsroomScrollerRef.current
@@ -42,7 +55,7 @@ export default function Footer() {
               <span className="gnum site-footer__gnum">Method</span>
               <nav className="site-footer__links" aria-label="Method">
                 {footer.methodLinks.map((l) => (
-                  <a key={l.href} href={l.href} className="site-footer__link">
+                  <a key={l.href} href={resolveFooterHref(l.href, linkHome)} className="site-footer__link">
                     {l.label}
                   </a>
                 ))}
@@ -53,7 +66,7 @@ export default function Footer() {
               <span className="gnum site-footer__gnum">Reading</span>
               <nav className="site-footer__links" aria-label="Reading">
                 {footer.readingLinks.map((l) => (
-                  <a key={l.label} href={l.href} className="site-footer__link">
+                  <a key={l.label} href={resolveFooterHref(l.href, linkHome)} className="site-footer__link">
                     {l.label}
                   </a>
                 ))}
@@ -64,7 +77,7 @@ export default function Footer() {
               <span className="gnum site-footer__gnum">Office</span>
               <nav className="site-footer__links" aria-label="Office">
                 {footer.officeLinks.map((l) => (
-                  <a key={l.label} href={l.href} className="site-footer__link">
+                  <a key={l.label} href={resolveFooterHref(l.href, linkHome)} className="site-footer__link">
                     {l.label}
                   </a>
                 ))}
@@ -74,7 +87,7 @@ export default function Footer() {
               <span className="gcorner site-footer__gcorner">E</span>
               <span className="gnum site-footer__gnum">Studio</span>
               <p className="site-footer__studio">
-                New York
+                Toronto
                 <br />
                 By appointment
               </p>
@@ -89,11 +102,11 @@ export default function Footer() {
                 e.preventDefault()
               }}
             >
-              <label className="visually-hidden" htmlFor="footer-email">
+              <label className="visually-hidden" htmlFor={emailFieldId}>
                 Email for booking inquiry
               </label>
               <input
-                id="footer-email"
+                id={emailFieldId}
                 name="email"
                 type="email"
                 autoComplete="email"
@@ -147,7 +160,11 @@ export default function Footer() {
               aria-label="Newsroom articles"
             >
               {newsroom.items.map((item, i) => (
-                <a key={`${item.date}-${i}`} href={item.href} className="site-footer__newsroom-card">
+                <a
+                  key={`${item.date}-${i}`}
+                  href={resolveFooterHref(item.href, linkHome)}
+                  className="site-footer__newsroom-card"
+                >
                   <span className="site-footer__newsroom-card-date">{item.date}</span>
                   <span className="site-footer__newsroom-card-title">{item.title}</span>
                   <span className="site-footer__newsroom-card-dek">{item.dek}</span>
