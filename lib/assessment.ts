@@ -1,5 +1,5 @@
 /** Raw score sum of all questions at max (used to normalize to 0–100). */
-export const ASSESSMENT_MAX_RAW = 140
+export const ASSESSMENT_MAX_RAW = 150
 
 export type QuestionType = 'single' | 'multi'
 
@@ -77,13 +77,14 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   },
   {
     id: 'q6',
-    label: 'Have you ever worked with a marketing agency or growth consultant?',
+    label: 'How many Express Entry or permanent residency cases can you typically handle at the same time?',
     type: 'single',
     options: [
-      { label: 'No, never', score: 0 },
-      { label: "Yes but it didn't work out", score: 3 },
-      { label: 'Yes and it was mixed', score: 7 },
-      { label: 'Yes and it was effective', score: 10 },
+      { label: '1–2', score: 0 },
+      { label: '3–5', score: 4 },
+      { label: '6–10', score: 8 },
+      { label: '11–20', score: 12 },
+      { label: '20+', score: 15 },
     ],
   },
   {
@@ -110,24 +111,27 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   },
   {
     id: 'q9',
-    label: 'What is the primary reason you took this call?',
+    label: 'On average, how long does it take from client intake to case completion?',
     type: 'single',
     options: [
-      { label: 'Curious but not actively looking', score: 0 },
-      { label: 'Open to growth if the right thing came along', score: 5 },
-      { label: 'Actively trying to grow right now', score: 10 },
-      { label: 'Growth is my number one priority this quarter', score: 15 },
+      { label: 'Less than 3 months', score: 15 },
+      { label: '3–6 months', score: 12 },
+      { label: '6–12 months', score: 8 },
+      { label: '12–18 months', score: 4 },
+      { label: '18+ months', score: 0 },
     ],
   },
   {
     id: 'q10',
-    label: 'If this was clearly a fit — how soon could you move forward?',
+    label:
+      "Of the permanent residency files you've closed — what percentage would you consider successful outcomes?",
     type: 'single',
     options: [
-      { label: 'Not sure yet', score: 0 },
-      { label: 'A few months', score: 3 },
-      { label: 'A few weeks', score: 7 },
-      { label: 'This week', score: 10 },
+      { label: '0–25%', score: 0 },
+      { label: '26–50%', score: 4 },
+      { label: '51–75%', score: 8 },
+      { label: '76–90%', score: 12 },
+      { label: '91–100%', score: 15 },
     ],
   },
 ]

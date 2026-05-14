@@ -91,6 +91,9 @@ export default function Footer({ linkHome }: FooterProps) {
                 <br />
                 By appointment
               </p>
+              <a className="site-footer__studio-email" href={`mailto:${footer.studioEmail}`}>
+                {footer.studioEmail}
+              </a>
             </div>
           </div>
 

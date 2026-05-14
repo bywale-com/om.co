@@ -23,6 +23,8 @@ export default function AssessmentClient() {
   } | null>(null)
   const utmRef = useRef<Record<string, string>>({})
   const tokenRef = useRef<string | null>(null)
+  /** `motion=partnership` selects `partnership_bookings`; `/partnerships` path implies the same when param is omitted. */
+  const motionRef = useRef<string | null>(null)
 
   const smsDisplay =
     typeof process.env.NEXT_PUBLIC_ASSESSMENT_SMS === 'string' && process.env.NEXT_PUBLIC_ASSESSMENT_SMS
@@ -32,6 +34,7 @@ export default function AssessmentClient() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     tokenRef.current = params.get('token')
+    motionRef.current = params.get('motion')
     const utm: Record<string, string> = {}
     for (const key of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']) {
       const val = params.get(key)
@@ -119,16 +122,29 @@ export default function AssessmentClient() {
     setSubmitError(null)
 
     const token = tokenRef.current
+    const path = typeof window !== 'undefined' ? window.location.pathname.replace(/\/$/, '') || '/' : '/'
+    const isPartnership =
+      motionRef.current === 'partnership' || path === '/partnerships'
+
     if (token && supabaseBrowser) {
-      const { error } = await supabaseBrowser
-        .from('new_bookings')
-        .update({
-          submission,
-          submitted_at: submittedAt,
-          status: 'completed',
-        })
-        .eq('token', token)
-        .is('submitted_at', null)
+      const { error } = isPartnership
+        ? await supabaseBrowser
+            .from('partnership_bookings')
+            .update({
+              submission,
+              artifact_completed_at: submittedAt,
+            })
+            .eq('token', token)
+            .is('artifact_completed_at', null)
+        : await supabaseBrowser
+            .from('new_bookings')
+            .update({
+              submission,
+              submitted_at: submittedAt,
+              status: 'completed',
+            })
+            .eq('token', token)
+            .is('submitted_at', null)
 
       if (error) {
         console.error('Supabase error:', error)

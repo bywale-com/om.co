@@ -5,9 +5,9 @@
 
 export const site = {
   name: 'Om Coda Consulting',
-  tagline: 'We solve business problems through partnerships, offers, and process.',
+  tagline: 'We accelerate business outcomes through partnerships',
   lead:
-    'We work with professional services firms across legal, immigration, and financial services to identify where revenue is being left on the table — and build the structured pathways that unlock it.',
+    'We work with professional services firms and community organizations across legal, immigration, and financial services to identify where outcomes are being left on the table, and build the structured pathways that unlock them.',
 } as const
 
 export const thesis = {
@@ -341,6 +341,7 @@ export const footer = {
     { href: '#', label: 'Email' },
     { href: '#', label: 'LinkedIn' },
   ],
+  studioEmail: 'omcoda@apexintro.com',
   tagline:
     'Offer development · Partnership architecture · Business development · Process design',
 } as const
