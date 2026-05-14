@@ -22,19 +22,19 @@ export const thesis = {
       title: 'We believe',
       num: '01',
       body:
-        'Great outcomes come from clarity on what you sell, who already holds access to the clients you need, and the operational rhythm that connects them.',
+        'Great outcomes come from clarity on what you deliver, who already holds access to the people you serve, and the operational rhythm that moves them forward consistently.',
     },
     {
       title: 'We think',
       num: '02',
       body:
-        'Every engagement starts with a hypothesis. We name the problem, form a thesis about where the opportunity sits, and sequence milestones so risk stays calibrated — weighted offer architecture applied to our work the same way we apply it to yours.',
+        'Every engagement starts with a hypothesis. We name the outcome being pursued, form a thesis about where the opportunity to accelerate it sits, and sequence milestones so risk stays calibrated — weighted offer architecture applied to our work the same way we apply it to yours.',
     },
     {
       title: 'We see',
       num: '03',
       body:
-        'Legal practices, immigration consultancies, financial services — organizations where trust compounds over years and the question is how to turn it into sustainable revenue.',
+        'Legal practices, immigration consultancies, financial services, settlement organizations — places where trust compounds over years and the question is how to direct it toward the outcomes that matter most to the people being served.',
     },
   ],
   /** Sticky thesis rail: one image per panel (scroll-synced in useScrollEffects). Files are portrait JPEGs. */
@@ -77,7 +77,7 @@ export const industries = [
     label: 'Financial services',
     focusTitle: 'Financial services',
     focusBody:
-      'We look for where fee stories, offer ladders, and partnership routes no longer match how sophisticated clients buy — then redesign the pathways so revenue compounds instead of eroding at the margin.',
+      "When the outcome is long-term financial security and wealth that compounds across a client's lifetime, the gap between what firms offer and what clients actually need to get there is where revenue erodes and relationships end quietly. We align offer ladders, partnership routes, and client pathways so value accelerates toward the outcomes clients came for — not just the transactions that are easiest to sell.",
     solutions: [
       'Offer development',
       'Revenue architecture',
@@ -96,7 +96,7 @@ export const industries = [
     label: 'Legal',
     focusTitle: 'Legal',
     focusBody:
-      'Partner calendars, intake design, and pricing that never moved with the market — we map how work actually flows so capacity, client experience, and referrals stop trading off against each other.',
+      "When the outcome is resolution — a business protected, a dispute settled, a life transition handled well — delays in intake, capacity, and referral flow don't just slow the firm. They slow the people depending on it. We map how work actually moves so capacity, client outcomes, and the relationships that sustain the practice all compound in the same direction.",
     solutions: [
       'Offer development',
       'Pipeline development',
@@ -115,7 +115,7 @@ export const industries = [
     label: 'Immigration',
     focusTitle: 'Immigration',
     focusBody:
-      'When operations are the offer, small routing gaps become brand risk. We align unit economics, intake-to-file discipline, and renewal rhythm so high volume stays defensible.',
+      'When permanent residency is the destination, every gap in the journey compounds delay. We align intake discipline, partnership structure, and client pathway design so the people you serve move faster and further toward the outcomes they came to you for.',
     solutions: [
       'Offer development',
       'Operations & process design',
@@ -134,7 +134,7 @@ export const industries = [
     label: 'Mission-driven orgs',
     focusTitle: 'Mission-driven orgs',
     focusBody:
-      'Earned revenue, grants, and programs often answer different questions until a major supporter asks for one story. We help you sequence offer and measurement so sustainability is legible, not improvised.',
+      'When the outcome is human stability — housing, employment, legal status, community integration — the distance between program delivery and real impact is where organizations lose credibility and funding. We align offers, partnerships, and measurement so every channel accelerates the same outcome rather than reporting around it.',
     solutions: [
       'Program architecture',
       'Offer development',
@@ -153,7 +153,7 @@ export const industries = [
     label: 'Public sector',
     focusTitle: 'Public sector',
     focusBody:
-      'Procurement, mandates, and reporting layers consume capacity. We treat alignment and ownership as the work — so improvements land where decisions actually happen, not only in slide decks.',
+      "When the outcome is a mandate delivered — services that reach people, policy that lands, systems that work — alignment gaps between decision-makers and implementers don't just create inefficiency. They delay the people the mandate was designed to serve. We treat stakeholder alignment and ownership as the work itself, so improvements reach the places where outcomes actually happen.",
     solutions: [
       'Diagnostic audit',
       'Stakeholder alignment',
@@ -183,24 +183,24 @@ export const whatWeDo = {
   eyebrow: 'What we do',
   intro: [
     'We are not a marketing agency. We do not run ads or manage your social media.',
-    'We are a consultancy. We come into a business, study how it earns, and design the offers, partnerships, and processes that compound what already works.',
+    'We are a consultancy. We come into an organization, study how outcomes are created, and design the offers, partnerships, and processes that accelerate them.',
     'The work sits across three disciplines:',
   ],
   disciplines: [
     {
       title: 'Offer development',
       text:
-        'Designing what you sell, how it is priced, and how one transaction leads naturally to the next.',
+        'Designing what you deliver, how it is structured, and how one interaction leads naturally to the next stage of outcomes for the people you serve.',
     },
     {
       title: 'Partnership architecture',
       text:
-        'Identifying who already has access to the clients or resources you need, and structuring relationships that serve both sides.',
+        'Identifying who already holds access to the people or resources needed to accelerate outcomes, and structuring relationships that serve all sides.',
     },
     {
       title: 'Business development',
       text:
-        'Building the outreach systems, pipelines, and processes that generate consistent revenue without depending on referrals or paid advertising.',
+        'Building the outreach systems, pipelines, and processes that generate consistent momentum without depending on single relationships or paid advertising.',
     },
   ],
 } as const
