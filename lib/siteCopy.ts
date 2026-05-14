@@ -16,7 +16,7 @@ export const thesis = {
     'Professional services firms where the relationship is the product. We study how you earn, then design offers, partnerships, and processes that compound what already works.',
   videoHeadline: 'Partnerships, offers, process',
   videoSupporting:
-    'Structured pathways from first conversation to retained revenue — without leaning on ads or quick fixes.',
+    'Structured pathways from accelerating business outcomes — built on mutually beneficial business relationships.',
   panels: [
     {
       title: 'We believe',
