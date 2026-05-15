@@ -1,0 +1,72 @@
+/* Home intro preloader — full viewport, white field, wipe-up reveal. */
+
+.home-preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: auto;
+  overflow: hidden;
+}
+
+.home-preloader__panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-bottom: 4px solid var(--ink, #0a0a0a);
+  transform: translateY(0);
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform;
+}
+
+.home-preloader--wipe .home-preloader__panel {
+  transform: translateY(-100%);
+}
+
+.home-preloader__video {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Desktop: video height = viewport, width scales with aspect ratio. */
+@media (min-width: 921px) {
+  .home-preloader__video {
+    height: 100vh;
+    width: auto;
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-preloader__panel {
+    transition: none;
+  }
+}
+
+html.home-preloader-active,
+html.home-preloader-active body {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Keep side rail collapsed for the entire preloader (incl. wipe), even if JS drops rail-load-intro early (e.g. Strict Mode). */
+html.home-preloader-active .site-canvas .site-rail {
+  flex-basis: 0 !important;
+  width: 0 !important;
+  max-width: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  opacity: 0 !important;
+  border-left-width: 0 !important;
+  border-right-width: 0 !important;
+  pointer-events: none !important;
+}

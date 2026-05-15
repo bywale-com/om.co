@@ -1,4 +1,5 @@
 'use client'
+import { isPreloaderComplete, PRELOADER_COMPLETE_EVENT } from '@/lib/preloaderEvents'
 import Lenis from 'lenis'
 import { useEffect } from 'react'
 
@@ -464,6 +465,8 @@ export default function useScrollEffects() {
       if (!canvas) return
       /* Nav scroll-lock (body position:fixed) zeros window.scrollY — would falsely expand the site rail. */
       if (document.body.classList.contains('hdr-menu-open')) return
+      /* One-shot load intro: scroll rail logic waits until preloader wipe (see runRailLoadIntroReveal). */
+      if (canvas.classList.contains('rail-load-intro')) return
       var scrollY = y != null ? y : (window.scrollY || document.documentElement.scrollTop || 0)
       var t = railThresholds()
       if (scrollY >= t.collapse) {
@@ -500,14 +503,14 @@ export default function useScrollEffects() {
       window.__omcodaLenis = lenis
     }
 
-    /* First paint must include .rail-load-intro (see page.tsx) so the rail has a committed "from" state; effect-only add runs too late for CSS transitions. */
-    if (canvas && reduceMotion) {
-      canvas.classList.remove('rail-load-intro')
-    }
-
+    /* First paint must include .rail-load-intro (see page.tsx) so the rail has a committed "from" state.
+       Removed only after the home preloader wipe finishes — scroll collapse/expand is unchanged. */
     var railLoadIntroRafIds: number[] = []
-    wireRailFromScroll(lenis)
-    if (canvas && !reduceMotion) {
+    var railLoadIntroDone = false
+
+    function runRailLoadIntroReveal() {
+      if (railLoadIntroDone || !canvas || !document.contains(canvas)) return
+      railLoadIntroDone = true
       var idA = requestAnimationFrame(function () {
         var idB = requestAnimationFrame(function () {
           var idC = requestAnimationFrame(function () {
@@ -521,6 +524,22 @@ export default function useScrollEffects() {
         railLoadIntroRafIds.push(idB)
       })
       railLoadIntroRafIds.push(idA)
+    }
+
+    function onPreloaderComplete() {
+      if (sig.aborted) return
+      runRailLoadIntroReveal()
+    }
+
+    wireRailFromScroll(lenis)
+    if (canvas) {
+      window.addEventListener(PRELOADER_COMPLETE_EVENT, onPreloaderComplete, {
+        signal: sig,
+        once: true,
+      })
+      if (isPreloaderComplete()) {
+        onPreloaderComplete()
+      }
     }
     wireRevealOnScroll(lenis)
     wireThesisPinSlides(lenis)
@@ -562,7 +581,7 @@ export default function useScrollEffects() {
       railLoadIntroRafIds.forEach(function (id) {
         cancelAnimationFrame(id)
       })
-      if (canvas) canvas.classList.remove('rail-load-intro')
+      /* Do not remove .rail-load-intro here — React Strict Mode remount would reveal the rail early. */
       ac.abort()
       delete window.__omcodaLenis
       if (lenis) lenis.destroy()

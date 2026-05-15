@@ -1,5 +1,6 @@
 'use client'
 import Footer from '@/components/Footer'
+import HomePreloader from '@/components/HomePreloader'
 import useScrollEffects from '@/hooks/useScrollEffects'
 import {
   engage,
@@ -16,7 +17,9 @@ export default function Home() {
   useScrollEffects()
 
   return (
-    <div className="site-canvas rail-load-intro">
+    <>
+      <HomePreloader />
+      <div className="site-canvas rail-load-intro">
       <aside className="site-rail" aria-hidden="true">
         <div className="site-rail__media">
           <div className="site-rail__media-fill">
@@ -505,5 +508,6 @@ export default function Home() {
         <Footer />
       </div>
     </div>
+    </>
   )
 }

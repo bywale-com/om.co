@@ -3,7 +3,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Footer from '@/components/Footer'
 import {
+  ASSESSMENT_MAX_RAW,
   ASSESSMENT_QUESTIONS,
+  PARTNERSHIP_MAX_RAW,
+  PARTNERSHIP_QUESTIONS,
   calcAssessmentScore,
   getAssessmentTier,
   type AssessmentAnswers,
@@ -12,7 +15,16 @@ import { site } from '@/lib/siteCopy'
 import { supabaseBrowser } from '@/lib/supabaseBrowser'
 import './assessment.css'
 
-export default function AssessmentClient() {
+export type AssessmentClientVariant = 'assessment' | 'partnerships'
+
+type AssessmentClientProps = {
+  /** Which questionnaire and scoring scale to use (`/assessment` vs `/partnerships`). */
+  variant?: AssessmentClientVariant
+}
+
+export default function AssessmentClient({ variant = 'assessment' }: AssessmentClientProps) {
+  const questions = variant === 'partnerships' ? PARTNERSHIP_QUESTIONS : ASSESSMENT_QUESTIONS
+  const maxRaw = variant === 'partnerships' ? PARTNERSHIP_MAX_RAW : ASSESSMENT_MAX_RAW
   const [answers, setAnswers] = useState<AssessmentAnswers>({})
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -59,14 +71,14 @@ export default function AssessmentClient() {
     }
   }, [])
 
-  const answeredCount = ASSESSMENT_QUESTIONS.filter((q) => {
+  const answeredCount = questions.filter((q) => {
     const a = answers[q.id]
     if (q.type === 'multi') return Array.isArray(a) && a.length > 0
     return a !== undefined
   }).length
 
-  const progress = Math.round((answeredCount / ASSESSMENT_QUESTIONS.length) * 100)
-  const allAnswered = answeredCount === ASSESSMENT_QUESTIONS.length
+  const progress = Math.round((answeredCount / questions.length) * 100)
+  const allAnswered = answeredCount === questions.length
 
   function toggleSingle(qid: string, idx: number) {
     setAnswers((prev) => ({ ...prev, [qid]: idx }))
@@ -84,12 +96,12 @@ export default function AssessmentClient() {
     e.preventDefault()
     if (submitting) return
 
-    const score = calcAssessmentScore(answers)
+    const score = calcAssessmentScore(answers, questions, maxRaw)
     const tier = getAssessmentTier(score, smsDisplay)
     const submittedAt = new Date().toISOString()
 
     const answerMap: Record<string, { question: string; answer: string | string[]; score: number }> = {}
-    for (const q of ASSESSMENT_QUESTIONS) {
+    for (const q of questions) {
       const ans = answers[q.id]
       if (ans === undefined) continue
       if (q.type === 'multi') {
@@ -124,7 +136,9 @@ export default function AssessmentClient() {
     const token = tokenRef.current
     const path = typeof window !== 'undefined' ? window.location.pathname.replace(/\/$/, '') || '/' : '/'
     const isPartnership =
-      motionRef.current === 'partnership' || path === '/partnerships'
+      variant === 'partnerships' ||
+      motionRef.current === 'partnership' ||
+      path === '/partnerships'
 
     if (token && supabaseBrowser) {
       const { error } = isPartnership
@@ -294,18 +308,18 @@ export default function AssessmentClient() {
                       aria-valuenow={progress}
                       aria-valuemin={0}
                       aria-valuemax={100}
-                      aria-label={`${answeredCount} of ${ASSESSMENT_QUESTIONS.length} questions answered`}
+                      aria-label={`${answeredCount} of ${questions.length} questions answered`}
                     >
                       <div className="asm-progress__bar" style={{ width: `${progress}%` }} />
                     </div>
                     <span className="asm-progress__label">
-                      {answeredCount} / {ASSESSMENT_QUESTIONS.length}
+                      {answeredCount} / {questions.length}
                     </span>
                   </div>
                 </div>
 
                 <div className="asm-form__questions">
-                  {ASSESSMENT_QUESTIONS.map((q, qIdx) => {
+                  {questions.map((q, qIdx) => {
                     const isMulti = q.type === 'multi'
                     const multiAns = (answers[q.id] as number[]) ?? []
                     const singleAns = answers[q.id] as number | undefined
@@ -360,8 +374,8 @@ export default function AssessmentClient() {
                   </button>
                   {!allAnswered && !submitting && (
                     <p className="asm-form__remaining">
-                      {ASSESSMENT_QUESTIONS.length - answeredCount} question
-                      {ASSESSMENT_QUESTIONS.length - answeredCount !== 1 ? 's' : ''} remaining
+                      {questions.length - answeredCount} question
+                      {questions.length - answeredCount !== 1 ? 's' : ''} remaining
                     </p>
                   )}
                   {submitError && <p className="asm-form__error">{submitError}</p>}
