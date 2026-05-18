@@ -1,0 +1,719 @@
+wale:
+
+@C:\Users\Admin\Documents\Wale Omotayo\Companies\omcoda\immigration_traceability_matrix.html This is what we're working on. The front end of the questionnaire is handled by our website + n8n workflow ( handling reactivation campagin and facilitating ), otherwise it's probably going to webhooks and edge functions in supabase handling stuff + ofcourse the connection between the forms and supabase / postgres.
+
+We've built this:
+
+And these are some of the changes we have in mind to implement further but now we're sort of getting into UI and I want to see how you'd handle the backend logic:
+
+Direct rating (0–10)
+
+
+
+
+
+Overall design and completeness: 9/10.
+
+
+
+Practical consultant-readiness (actionable next steps + billing hooks): 9/10.
+
+
+
+Technical traceability and auditability: 8.5/10.
+
+
+
+Usability for intake respondents (question clarity / fatigue risk): 8/10.
+
+What you did well (high-level)
+
+
+
+
+
+Full traceability. Every question maps to at least one Result Key and every Result Key traces back to a clear eligibility rule and next step — exactly what a compliance/audit trail needs.
+
+
+
+Two-table closure: the billing reference table ties business outcomes to technical results — that converts insights directly into revenue motion. That’s rare and high-value.
+
+
+
+Confidence column: sensible and pragmatic; it prevents over-promising in marketing messaging and signals where consultant validation is mandatory.
+
+
+
+Modular question architecture: grouping into routing / CEC / FSW / language / ECA / employer / trades / spouse / ops is the right decomposition for Ontario-first logic.
+
+
+
+Explicit exclusion rules and missing-data fallbacks: these reduce wasted consultant time and make the automation defensible.
+
+Risks and gaps (what to fix next)
+
+
+
+
+
+Edge-case rules need formalized date logic (low effort, high impact).
+
+
+
+
+
+Several rules depend on “within X years” windows (CEC 3 years; FSW/FST 5 years; language validity 2 years). The matrix sometimes uses plain text; convert those into explicit date computations and examples (e.g., “foreign work end date >= application_date - 5 years”) so the engine never mis-evaluates near-boundary cases.
+
+
+
+Employer-side validation path is under-specified.
+
+
+
+
+
+OINP Employer Job Offer results require employer revenue, staff counts, and registration. Add the minimum set of employer questions and a fast validation flow (email + employer portal checklist) to avoid false positives that cost billable hours.
+
+
+
+Missing confidence-weight aggregation logic.
+
+
+
+
+
+You have a per-result confidence score; add a deterministic rule that aggregates confidences when multiple results appear (e.g., min/weighted-average) and a final “outreach-safe level” threshold used by messaging templates.
+
+
+
+Category-draw mapping needs enrichment.
+
+
+
+
+
+Canada’s 2026 category-based draws change frequently; map your category results to the exact category names IRCC uses and add a drift-detection signal so the engine flags when a result’s relevance changes.
+
+
+
+CRS estimation granularity.
+
+
+
+
+
+The matrix currently lists “score delta” bands. For consultant conversion, add a deterministic CRS calculator step or a link to a recalculation microservice (education + language + age + work + spousal factors) so consultants get a numeric estimate, not just a band.
+
+
+
+onvert all human-language date rules to explicit boolean pseudo-code in the Rule Summary column. Example: R-FSW-01 rule → "eligible_if( sum_fulltime_foreign_years_in_last_5yrs >= 2 )". This eliminates boundary errors.
+
+
+
+Add 6 mandatory employer questions and an employer-validation fallback (B-06 billing tier) so OINP hits produce fewer false-positives.
+
+
+
+Add a single-line “outreach-safe message” template per confidence bracket (High/Medium/Low) that the reactivation engine can surface in the consultant CRM.
+
+
+
+Implement a CRS micro-calculator module and link it to the matrix so each Result row gets a numeric CRS estimate and a delta vs the user’s last known score.
+
+
+
+Add a category-draw mapping table that links occupations → IRCC category names → active draw feed; include a TTL (time-to-live) so the engine flags stale category matches.
+
+
+
+Restored/expired status and “application in process” cases — include a flag that forces manual review before outreach.
+
+
+
+Self-employment and unpaid internships — explicit exclusions unless validated by supporting docs.
+
+
+
+Physicians, regulated professionals, and occupations with licensing requirements — surface licensing state early in Module 6 and require consultant validation before outreach.
+
+
+
+Add a “rule drift” telemetry dashboard: counts of leads hitting each rule per week, % of low-confidence results requiring manual validation, and the IRCC / OINP source change alerts. That is how you keep the engine accurate over time.
+
+
+
+Add an audit trail: store the snapshot of the questionnaire answers that produced each result key plus the deterministic rule state so every consultant action is defensible in audits.
+
+
+
+Additional information to aid:
+
+
+
+Must-have data fields
+
+
+
+
+
+Current country of residence and province, especially Ontario.
+
+
+
+Current immigration status: work permit, study permit, visitor, maintained status, expired status, outside Canada.
+
+
+
+All Canadian work history in the last 3 years: employer, occupation, TEER/NOC, dates, hours, paid or unpaid, employee or self-employed, whether work was done while studying.
+
+
+
+All foreign work history in the last 5 years with the same fields.
+
+
+
+Language test type, date, and section scores for English and French.
+
+
+
+Education history, including Canadian credentials and foreign credential assessment status.
+
+
+
+Job offer details: employer name, location, permanence, hours, wage, TEER/NOC, LMIA or exempt status.
+
+
+
+Ontario employer details if a PNP employer stream may apply: years in operation, revenue, staff count, and registration status.
+
+
+
+Trade/licensing details: certificate of qualification, regulated occupation status, province of certification.
+
+
+
+Express Entry profile status: profile exists, creation date, last updated date, current CRS, last ITA date, previous refusal or withdrawal history.
+
+
+
+Family/spouse factors: marital status, spouse language, spouse education, spouse Canadian work experience, sibling in Canada.
+
+
+
+French-language ability and category-based occupation fit.
+
+Must-have logic items
+
+
+
+
+
+Rolling date-window checks for CEC, FSW, FST, language validity, and foreign work lookback.
+
+
+
+Ontario employer eligibility checks separate from candidate eligibility.
+
+
+
+A confidence framework that distinguishes:
+
+
+
+
+
+confirmed,
+
+
+
+likely,
+
+
+
+possible pending verification,
+
+
+
+excluded.
+
+
+
+A ranking model for multiple simultaneous pathways.
+
+
+
+A stale-profile flag that identifies people who created an Express Entry profile but never updated it.
+
+
+
+A missing-data flag that routes the record into a consultant validation step instead of a final yes/no.
+
+Must-have result categories
+
+
+
+
+
+Eligible now.
+
+
+
+Possibly eligible pending verification.
+
+
+
+Eligible for more than one pathway.
+
+
+
+Not currently eligible but close.
+
+
+
+Monitoring only.
+
+
+
+Not actionable / exclude.
+
+
+
+Consultant review required.
+
+Must-have billing logic
+
+
+
+
+
+Separate billing references for:
+
+
+
+
+
+profile update,
+
+
+
+eligibility review,
+
+
+
+CRS recalculation,
+
+
+
+employer-stream filing,
+
+
+
+language strategy,
+
+
+
+ECA review,
+
+
+
+certificate-of-qualification review,
+
+
+
+PNP employer validation,
+
+
+
+retainer/monitoring.
+
+
+
+Add a clear rule for when a result becomes billable: new pathway found, filing-ready, employer-validation needed, or document gap uncovered.
+
+Must-have operational fields
+
+
+
+
+
+Last contact date.
+
+
+
+Last assessment date.
+
+
+
+Original pathway discussed.
+
+
+
+Previous consultant notes.
+
+
+
+Source of lead.
+
+
+
+Permission to recontact.
+
+
+
+Outreach status.
+
+
+
+Recommended outreach message tier.
+
+Must-have audit fields
+
+
+
+
+
+Question snapshot used to generate the result.
+
+
+
+Rule version.
+
+
+
+Result version.
+
+
+
+Timestamp.
+
+
+
+Analyst or system operator.
+
+
+
+Confidence score.
+
+
+
+Manual override indicator.
+
+
+
+Reason for override.
+
+Strong additions
+
+
+
+
+
+Add one field for “what changed since last review.”
+
+
+
+Add one field for “next change likely to unlock a pathway.”
+
+
+
+Add one field for “time sensitivity,” such as expiring language tests or foreign experience rolling out of window.
+
+
+
+Add one field for “estimated CRS delta since last review.”
+
+
+
+Add one field for “consultant action priority.”
+
+What to include in the share packet
+
+
+
+
+
+The matrix file.
+
+
+
+A short design note explaining the architecture.
+
+
+
+A rule glossary for all result keys.
+
+
+
+A billing reference glossary.
+
+
+
+A change log with what was added after the first version.
+
+
+
+A one-page summary of the operating model: questionnaire → result engine → consultant validation → billable next step.
+
+
+
+claude:
+
+Let me read through the matrix file first to understand what's been built.
+
+Read
+immigration_traceability_matrix.html
+Good. Let me check what's already in Apex Demos before proposing anything.
+
+
+Used 3 tools
+Good. Now I have the full picture. Here's what exists and what I'd build:
+
+What's already there (that we build on)
+new_bookings — already handles the intake form flow. Has submission (JSONB), assessment_link, email sequences, token-based access. The immigration questionnaire rides on this same table — the form populates submission, token becomes the link sent to the lead.
+callers — the lead/contact record. Has case_type (includes permanent_residence), status, source, conversation_id. Immigration leads would either extend this or key into it.
+jobs — async job orchestration already exists. The rule engine can post a job here and process async if the evaluation is heavy.
+email_events — open/click tracking. Reactivation campaign observability is already partially wired.
+No immigration-specific tables exist yet. Clean slate for the engine.
+
+What I'd add (4 tables + 2 edge functions)
+Schema
+-- 1. Stores the raw Q-01→Q-37 snapshot at time of submission
+CREATE TABLE imm_assessments (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  booking_id   UUID REFERENCES new_bookings(id),      -- ties to intake record
+  submitted_at TIMESTAMPTZ DEFAULT now(),
+  rule_version TEXT NOT NULL,                          -- e.g. '2026-05-17'
+  answers      JSONB NOT NULL,                         -- full question snapshot
+  source       TEXT DEFAULT 'website_form'            -- website_form | n8n | consultant
+);
+
+-- 2. Computed results per assessment (one row per result key triggered)
+CREATE TABLE imm_results (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  assessment_id   UUID REFERENCES imm_assessments(id),
+  booking_id      UUID REFERENCES new_bookings(id),
+  evaluated_at    TIMESTAMPTZ DEFAULT now(),
+  rule_version    TEXT NOT NULL,
+  result_key      TEXT NOT NULL,                       -- R-CEC-01, R-FSW-01, etc.
+  confidence      TEXT NOT NULL CHECK (confidence IN ('high','medium','low','excluded')),
+  evidence        JSONB,                               -- which answers triggered this
+  billing_refs    TEXT[],                              -- ['B-02','B-08'] etc.
+  result_category TEXT NOT NULL,                       -- eligible_now | possibly_eligible | monitoring | excluded | consultant_review
+  crs_estimate    JSONB,                               -- {score, breakdown, delta_from_last}
+  outreach_tier   TEXT CHECK (outreach_tier IN ('high','medium','low')),
+  time_sensitive  BOOLEAN DEFAULT false,               -- expiring language test, window closing
+  next_unlock     TEXT,                                -- "X months to CEC threshold"
+  manual_override BOOLEAN DEFAULT false,
+  override_reason TEXT,
+  analyst         TEXT DEFAULT 'system'
+);
+
+-- 3. Immutable audit trail — never updated, only inserted
+CREATE TABLE imm_audit (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  assessment_id   UUID REFERENCES imm_assessments(id),
+  booking_id      UUID REFERENCES new_bookings(id),
+  event_type      TEXT NOT NULL,                       -- evaluated | override | outreach_sent | consultant_reviewed
+  rule_version    TEXT NOT NULL,
+  answer_snapshot JSONB NOT NULL,                      -- full copy at event time
+  result_snapshot JSONB NOT NULL,                      -- full results at event time
+  actor           TEXT NOT NULL,                       -- 'system' | consultant email
+  confidence_agg  NUMERIC,                             -- 0.0–1.0 aggregate
+  created_at      TIMESTAMPTZ DEFAULT now()
+);
+
+-- 4. Category draw map with TTL — updated manually or by a cron
+CREATE TABLE imm_category_draws (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  result_key       TEXT NOT NULL,                      -- R-CAT-01 through R-CAT-05
+  ircc_name        TEXT NOT NULL,                      -- exact IRCC label
+  noc_codes        TEXT[],                             -- qualifying NOC codes
+  is_active        BOOLEAN DEFAULT true,
+  last_verified    DATE NOT NULL,
+  ttl_days         INTEGER DEFAULT 30,
+  stale            BOOLEAN GENERATED ALWAYS AS (
+                     now()::date - last_verified > ttl_days
+                   ) STORED,
+  updated_at       TIMESTAMPTZ DEFAULT now()
+);
+Edge Function 1: imm-submit
+Webhook receiver. n8n or the website form POSTs here.
+
+// What it does:
+// 1. Upserts or finds the new_bookings record by email/token
+// 2. Writes imm_assessments row with rule_version stamped
+// 3. Calls imm-evaluate synchronously (or enqueues a jobs row if async)
+// 4. Returns {assessment_id, results, outreach_tier} to caller
+
+POST /functions/v1/imm-submit
+Body: { token?: string, email: string, answers: Record<string, unknown> }
+Edge Function 2: imm-evaluate
+The rule engine. Pure function — takes answers, returns structured results.
+
+The core pattern for every rule:
+
+type RuleResult = {
+  triggered: boolean
+  confidence: 'high' | 'medium' | 'low' | 'excluded'
+  evidence: string[]
+  billing: string[]
+  time_sensitive?: boolean
+  next_unlock?: string
+}
+
+// Date windows expressed as explicit boolean arithmetic — never string comparison
+function cecWindowCheck(answers: Answers, asOf: Date): RuleResult {
+  const endDate = answers.canadian_work_end_date
+    ? new Date(answers.canadian_work_end_date)
+    : new Date() // ongoing job
+
+  const windowStart = subYears(asOf, 3)
+  const hoursInWindow = computeHoursInWindow(answers.canadian_work_history, windowStart, asOf)
+
+  if (hoursInWindow >= 1560) {
+    return { triggered: true, confidence: 'high', evidence: [`${hoursInWindow} hrs in 3-yr window`], billing: ['B-02'] }
+  }
+
+  if (hoursInWindow > 0) {
+    const monthsToThreshold = estimateMonthsToThreshold(hoursInWindow, answers.weekly_hours)
+    return {
+      triggered: false, confidence: 'low',
+      evidence: [`${hoursInWindow} hrs — ${monthsToThreshold} months to CEC`],
+      billing: ['B-07'],
+      next_unlock: `${monthsToThreshold} months to CEC threshold`
+    }
+  }
+
+  return { triggered: false, confidence: 'excluded', evidence: ['No qualifying Canadian work'], billing: [] }
+}
+Confidence aggregation when multiple results trigger:
+
+// Rule: aggregate = min(individual confidences), with a floor adjustment if 3+ high results
+const CONFIDENCE_WEIGHT = { high: 1.0, medium: 0.6, low: 0.3, excluded: 0.0 }
+
+function aggregateConfidence(results: RuleResult[]): number {
+  const triggered = results.filter(r => r.triggered)
+  if (!triggered.length) return 0
+  const weights = triggered.map(r => CONFIDENCE_WEIGHT[r.confidence])
+  return Math.min(...weights) // pessimistic — safest for outreach
+}
+
+// Outreach tier from aggregate:
+// >= 0.8 → 'high' (safe to send personalised message with specific pathway)
+// >= 0.5 → 'medium' (soft outreach: "your situation may have changed, let's review")
+// < 0.5  → 'low' (consultant validation required before any outreach)
+CRS calculator — deterministic, no LLM, no estimation:
+
+function calculateCRS(answers: Answers): { score: number, breakdown: Record<string, number> } {
+  // Core human capital factors
+  const age       = scoreAge(answers.date_of_birth)
+  const education = scoreEducation(answers.education_level, answers.has_eca)
+  const language  = scoreLanguage(answers.primary_language_scores, answers.secondary_language_scores)
+  const canadianWork = scoreCdnWork(answers.canadian_work_years)
+  const foreignWork  = scoreForeignWork(answers.foreign_work_years_in_last5)
+
+  // Spouse/partner factors (if applicable)
+  const spouse = answers.is_married
+    ? scoreSpouse(answers.spouse_language, answers.spouse_education, answers.spouse_cdn_work)
+    : 0
+
+  // Additional factors
+  const sibling  = answers.sibling_in_canada ? 15 : 0
+  const jobOffer = scoreJobOffer(answers.job_offer_lmia, answers.job_offer_teer)
+  const pnp      = answers.has_pnp_nomination ? 600 : 0
+
+  const score = age + education + language + canadianWork + foreignWork + spouse + sibling + jobOffer + pnp
+
+  return { score, breakdown: { age, education, language, canadianWork, foreignWork, spouse, sibling, jobOffer, pnp } }
+}
+Data flow end-to-end
+Website form submit
+      ↓
+  imm-submit (edge fn)
+      ↓
+  writes imm_assessments + calls imm-evaluate
+      ↓
+  imm-evaluate runs all 37 rule checks
+      ↓
+  writes imm_results[] + imm_audit row
+      ↓
+  returns {outreach_tier, result_keys, crs_estimate, billing_refs}
+      ↓
+  n8n picks up (webhook or polling new_bookings.status change)
+      ↓
+  n8n routes by outreach_tier:
+    high   → queue personalised reactivation email immediately
+    medium → queue soft-touch email at 24hr delay
+    low    → create consultant review task, hold outreach
+Three things I'd prioritize first
+The schema migration — gets everything in place; n8n can start writing to it immediately even before the rule engine is live.
+imm-evaluate with CEC + FSW + language rules only — covers 80% of the candidate population. Other modules follow.
+imm_audit insert trigger — make it append-only from day one so the audit trail is defensible even during development.
+Want me to write the actual migration SQL and the full imm-evaluate edge function code?
+
+
+wale:
+
+what are these in order pls:
+
+37 rule checks
+
+claude:
+
+From the matrix, Q-01 through Q-37 in order:
+
+**Module 1 — Identity & Current State**
+1. Q-01 — Are you currently in Canada?
+2. Q-02 — Current immigration status
+3. Q-03 — Do you have an active Express Entry profile?
+4. Q-04 — When was your EE profile last updated?
+5. Q-05 — What province do you live in / intend to settle in?
+
+**Module 2 — Canadian Work Experience**
+6. Q-06 — Years of Canadian skilled work in last 3 years
+7. Q-07 — NOC code / TEER level for Canadian work
+8. Q-08 — Full-time or part-time? Hours/week?
+9. Q-09 — Were you a full-time student during Canadian work?
+10. Q-10 — Is Canadian work experience in Ontario specifically?
+11. Q-11 — Is the Canadian job ongoing? End date?
+12. Q-12 — Does occupation fall in a targeted category (healthcare, STEM, trades, etc.)?
+
+**Module 3 — Foreign Work Experience**
+13. Q-13 — Years of foreign skilled work in last 10 years
+14. Q-14 — Is foreign work within the last 5 years (CRS window)?
+15. Q-15 — Was foreign work continuous, paid, and skilled (TEER 0/1/2/3)?
+16. Q-16 — Does foreign work fall in a skilled trade occupation?
+
+**Module 4 — Language**
+17. Q-17 — Which language test? (IELTS, CELPIP, TEF, TCF)
+18. Q-18 — Scores in speaking, listening, reading, writing
+19. Q-19 — Test date — is it still valid (within 2 years)?
+20. Q-20 — French test results (TEF/TCF Canada)?
+21. Q-21 — Plan to retake any language test?
+
+**Module 5 — Education**
+22. Q-22 — Highest level of education completed
+23. Q-23 — Was the credential earned in Canada or abroad?
+24. Q-24 — Do you have a valid ECA for your foreign credential?
+
+**Module 6 — Job Offer & Ontario Employer**
+25. Q-25 — Current job offer from an Ontario employer?
+26. Q-26 — Is the offer full-time, permanent, at prevailing wage?
+27. Q-27 — NOC/TEER of the job offer
+28. Q-28 — Employer details (CRA registration, years operating, staff count, revenue)
+29. Q-29 — Is the employer willing to support an OINP application?
+30. Q-30 — Is the offer LMIA-supported or LMIA-exempt?
+
+**Module 7 — Trades & Licensing**
+31. Q-31 — Is your occupation a designated skilled trade (IRCC FST list)?
+32. Q-32 — Do you hold a certificate of qualification (Red Seal or provincial)?
+33. Q-33 — Is your trade in construction, agriculture, manufacturing, or logistics (OINP IDS)?
+
+**Module 8 — Family & Additional CRS**
+34. Q-34 — Sibling who is Canadian citizen or PR, 18+?
+35. Q-35 — Marital status and spouse's qualifications
+
+**Module 9 — Operational / Profile**
+36. Q-36 — Last known CRS score
+37. Q-37 — Which programs/streams was the client previously assessed for?
+

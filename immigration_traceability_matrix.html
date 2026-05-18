@@ -1,0 +1,648 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,sans-serif)}
+.wrap{padding:1rem 0;color:var(--color-text-primary)}
+h2{font-size:16px;font-weight:500;margin-bottom:4px;color:var(--color-text-primary)}
+.sub{font-size:12px;color:var(--color-text-secondary);margin-bottom:20px}
+.section-label{font-size:13px;font-weight:500;color:var(--color-text-secondary);margin:24px 0 8px;text-transform:uppercase;letter-spacing:.04em}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:var(--color-background-secondary);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);padding:7px 10px;text-align:left;border-bottom:1px solid var(--color-border-secondary);white-space:nowrap}
+td{padding:7px 10px;vertical-align:top;border-bottom:1px solid var(--color-border-tertiary);line-height:1.45;color:var(--color-text-primary)}
+tr:hover td{background:var(--color-background-secondary)}
+.key{font-family:var(--font-mono);font-size:10px;font-weight:500;padding:2px 5px;border-radius:4px;white-space:nowrap;display:inline-block}
+.k-cec{background:#E6F1FB;color:#0C447C}.k-fsw{background:#EAF3DE;color:#27500A}.k-fst{background:#EEEDFE;color:#3C3489}.k-pnp{background:#FAEEDA;color:#633806}.k-cat{background:#E1F5EE;color:#085041}.k-gap{background:#FCEBEB;color:#791F1F}.k-ops{background:#F1EFE8;color:#444441}
+@media(prefers-color-scheme:dark){
+.k-cec{background:#0C447C;color:#B5D4F4}.k-fsw{background:#27500A;color:#C0DD97}.k-fst{background:#3C3489;color:#CECBF6}.k-pnp{background:#633806;color:#FAC775}.k-cat{background:#085041;color:#9FE1CB}.k-gap{background:#791F1F;color:#F7C1C1}.k-ops{background:#444441;color:#D3D1C7}
+}
+.pills{display:flex;flex-wrap:wrap;gap:4px}
+.q-tag{font-size:10px;background:var(--color-background-secondary);border:1px solid var(--color-border-secondary);border-radius:3px;padding:1px 5px;color:var(--color-text-secondary);white-space:nowrap}
+.mod{font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:3px}
+.exc{color:var(--color-text-danger,#A32D2D);font-size:11px}
+.next{color:var(--color-text-success,#3B6D11);font-size:11px}
+.conf{font-size:10px;padding:1px 5px;border-radius:3px;font-weight:500}
+.conf-high{background:#EAF3DE;color:#3B6D11}.conf-med{background:#FAEEDA;color:#854F0B}.conf-low{background:#FCEBEB;color:#A32D2D}
+@media(prefers-color-scheme:dark){.conf-high{background:#27500A;color:#C0DD97}.conf-med{background:#633806;color:#FAC775}.conf-low{background:#791F1F;color:#F7C1C1}}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;font-size:11px;align-items:center}
+.legend span{display:flex;align-items:center;gap:4px}
+.divider{height:1px;background:var(--color-border-secondary);margin:28px 0}
+.bill-high{color:var(--color-text-success,#3B6D11);font-weight:500}
+.bill-mid{color:var(--color-text-warning,#854F0B);font-weight:500}
+.bill-low{color:var(--color-text-secondary)}
+.tbl-wrap{overflow-x:auto}
+</style>
+
+<div class="wrap">
+<h2>Immigration Eligibility Reactivation — Full Traceability Matrix</h2>
+<p class="sub">Ontario-focused Express Entry & OINP reactivation engine · Questions → Rules → Results → Billing</p>
+
+<div class="legend">
+  <b style="font-size:11px;color:var(--color-text-secondary)">Result families:</b>
+  <span><span class="key k-cec">R-CEC</span> Canadian Experience</span>
+  <span><span class="key k-fsw">R-FSW</span> Federal Skilled Worker</span>
+  <span><span class="key k-fst">R-FST</span> Federal Skilled Trades</span>
+  <span><span class="key k-pnp">R-PNP</span> Ontario PNP streams</span>
+  <span><span class="key k-cat">R-CAT</span> Category-based draws</span>
+  <span><span class="key k-gap">R-GAP</span> Gap / not yet eligible</span>
+  <span><span class="key k-ops">R-OPS</span> Operational / profile</span>
+</div>
+
+<div class="section-label">Table 1 — Full Traceability Matrix (Questions → Rules → Results → Next Step)</div>
+<div class="tbl-wrap">
+<table>
+<thead>
+<tr>
+  <th style="min-width:110px">Module / Question</th>
+  <th style="min-width:60px">Q-ID</th>
+  <th style="min-width:70px">Result key(s) triggered</th>
+  <th style="min-width:160px">Eligibility rule summary</th>
+  <th style="min-width:90px">Exclusion conditions</th>
+  <th style="min-width:120px">Missing-data fallback</th>
+  <th style="min-width:100px">Confidence</th>
+  <th style="min-width:130px">Next step for consultant</th>
+  <th style="min-width:50px">Billing ref</th>
+</tr>
+</thead>
+<tbody>
+
+<!-- MODULE 1: Identity & Current State -->
+<tr>
+  <td colspan="9" style="background:var(--color-background-secondary);font-size:11px;font-weight:500;color:var(--color-text-secondary);padding:5px 10px">MODULE 1 — Identity & Current State</td>
+</tr>
+<tr>
+  <td>Are you currently in Canada?</td>
+  <td><span class="key k-ops">Q-01</span></td>
+  <td><div class="pills"><span class="key k-ops">R-OPS-01</span></div></td>
+  <td>Routes to Ontario-specific logic; confirms physical presence eligibility for OINP streams and CEC counting</td>
+  <td class="exc">Outside Canada → OINP employer streams excluded; CEC hours still count if worked in Canada</td>
+  <td>Assume in Canada if work permit is valid and Ontario-based</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Route to Ontario vs. non-Ontario logic branch</td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>Current immigration status (work permit, study permit, visitor, no status, outside Canada)</td>
+  <td><span class="key k-ops">Q-02</span></td>
+  <td><div class="pills"><span class="key k-cec">R-CEC-01</span><span class="key k-pnp">R-PNP-02</span><span class="key k-ops">R-OPS-01</span></div></td>
+  <td>Work permit holders are primary CEC candidates; study permit holders have restricted hours (20 hrs/wk cap during study); visitor status is generally ineligible for CEC but may retain FSW eligibility</td>
+  <td class="exc">Visitor or no-status → CEC excluded; student work only counts post-graduation or PGWP</td>
+  <td>Flag as "status validation required"</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Confirm permit type, expiry, and PGWP eligibility if applicable</td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>Do you have an active Express Entry profile?</td>
+  <td><span class="key k-ops">Q-03</span></td>
+  <td><div class="pills"><span class="key k-ops">R-OPS-02</span><span class="key k-ops">R-OPS-03</span></div></td>
+  <td>Profile must exist to receive ITA; determines if this is a creation or update engagement</td>
+  <td class="exc">No profile → cannot receive ITA; profile creation is first required action</td>
+  <td>If unknown, treat as stale/needs creation — flag for profile audit</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Profile creation or reactivation; billable entry point</td>
+  <td><span class="key k-ops">B-01</span></td>
+</tr>
+<tr>
+  <td>When was your Express Entry profile last updated?</td>
+  <td><span class="key k-ops">Q-04</span></td>
+  <td><div class="pills"><span class="key k-ops">R-OPS-03</span><span class="key k-gap">R-GAP-05</span></div></td>
+  <td>Profile older than 6 months is likely stale relative to new category-based draws, updated NOC codes, new PNP streams launched since 2023</td>
+  <td class="exc">Profile expired (12 months) → must re-create from scratch</td>
+  <td>Flag as "profile likely stale" if updated >6 months ago</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">Profile audit + refresh; strategy session</td>
+  <td><span class="key k-ops">B-01</span></td>
+</tr>
+<tr>
+  <td>What province do you live in / intend to settle in?</td>
+  <td><span class="key k-ops">Q-05</span></td>
+  <td><div class="pills"><span class="key k-pnp">R-PNP-01</span><span class="key k-pnp">R-PNP-02</span><span class="key k-pnp">R-PNP-03</span></div></td>
+  <td>Ontario residency/intent triggers full OINP stream evaluation; other provinces trigger respective PNP analysis (out of current scope)</td>
+  <td class="exc">Quebec → excluded from federal EE streams; separate QSWP applies</td>
+  <td>Default to Ontario if employer is Ontario-based</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Gate for Ontario PNP module; flag Quebec cases for separate advisory</td>
+  <td>—</td>
+</tr>
+
+<!-- MODULE 2: Canadian Work Experience -->
+<tr>
+  <td colspan="9" style="background:var(--color-background-secondary);font-size:11px;font-weight:500;color:var(--color-text-secondary);padding:5px 10px">MODULE 2 — Canadian Work Experience (CEC, Category-Based, OINP Employer Streams)</td>
+</tr>
+<tr>
+  <td>How many years of Canadian skilled work experience do you have in the last 3 years?</td>
+  <td><span class="key k-cec">Q-06</span></td>
+  <td><div class="pills"><span class="key k-cec">R-CEC-01</span><span class="key k-gap">R-GAP-01</span></div></td>
+  <td>CEC requires minimum 1 year (1,560 hrs) Canadian skilled work experience within the last 3 years at NOC TEER 0, 1, 2, or 3</td>
+  <td class="exc">&lt;1 year total → R-GAP-01 triggered; self-employment generally excluded; most student work excluded</td>
+  <td>If partial (&lt;1 yr) → calculate months to threshold; flag as "X months to CEC eligibility"</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">CEC profile update + CRS recalculation; timeline projection</td>
+  <td><span class="key k-cec">B-02</span></td>
+</tr>
+<tr>
+  <td>What is your occupation's NOC code / TEER level for Canadian work?</td>
+  <td><span class="key k-cec">Q-07</span></td>
+  <td><div class="pills"><span class="key k-cec">R-CEC-01</span><span class="key k-fst">R-FST-01</span><span class="key k-cat">R-CAT-03</span><span class="key k-pnp">R-PNP-01</span></div></td>
+  <td>TEER 0/1/2/3 qualifies for CEC; TEER 2/3 trades occupations may qualify for FST; category-based draws require specific NOC alignment (healthcare, STEM, trades, transport, education, agriculture)</td>
+  <td class="exc">TEER 4/5 → ineligible for CEC/FSW/FST; check if OINP In-Demand Skills applies for select TEER C trades</td>
+  <td>If NOC unknown, use job title to infer TEER; flag for validation</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">NOC verification; occupational category mapping for draw eligibility</td>
+  <td><span class="key k-cec">B-02</span></td>
+</tr>
+<tr>
+  <td>Was the Canadian work full-time (30+ hrs/wk)? Or part-time — if so, how many hours/week?</td>
+  <td><span class="key k-cec">Q-08</span></td>
+  <td><div class="pills"><span class="key k-cec">R-CEC-01</span><span class="key k-gap">R-GAP-01</span></div></td>
+  <td>CEC requires 1,560 hours; part-time counts but accumulates slowly; two part-time jobs can combine</td>
+  <td class="exc">Total hours &lt;1,560 in 3-yr window → CEC not met; calculate shortfall</td>
+  <td>Calculate hours-to-threshold if part-time; note combining two jobs is permitted</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Hours audit; timeline to CEC threshold if not yet met</td>
+  <td><span class="key k-gap">B-07</span></td>
+</tr>
+<tr>
+  <td>Were you a full-time student during any of this Canadian work?</td>
+  <td><span class="key k-cec">Q-09</span></td>
+  <td><div class="pills"><span class="key k-cec">R-CEC-01</span><span class="key k-gap">R-GAP-01</span></div></td>
+  <td>Work while full-time student generally excluded from CEC hours; co-op placements excluded; PGWP-era work fully counts</td>
+  <td class="exc">Student work during full-time enrollment → excluded from CEC 1-year count</td>
+  <td>Clarify PGWP start date to delineate eligible vs ineligible period</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">PGWP work history audit; recalculate eligible hours</td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>Is your Canadian work experience in Ontario specifically?</td>
+  <td><span class="key k-pnp">Q-10</span></td>
+  <td><div class="pills"><span class="key k-pnp">R-PNP-01</span><span class="key k-pnp">R-PNP-02</span></div></td>
+  <td>OINP Employer Job Offer streams and EE Human Capital stream require Ontario-based employment; experience outside Ontario does not count toward OINP-specific thresholds</td>
+  <td class="exc">Work outside Ontario → OINP employer streams likely excluded unless current Ontario employer job offer exists</td>
+  <td>If employer is Ontario-based and candidate is relocating, flag as candidate but note residency gap</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">Employer intake for OINP; confirm Ontario address</td>
+  <td><span class="key k-pnp">B-04</span></td>
+</tr>
+<tr>
+  <td>Is your Canadian job ongoing? What is the end date if not?</td>
+  <td><span class="key k-cec">Q-11</span></td>
+  <td><div class="pills"><span class="key k-cec">R-CEC-01</span><span class="key k-pnp">R-PNP-02</span><span class="key k-gap">R-GAP-04</span></div></td>
+  <td>For CEC, work must be within last 3 years (active or recently ended); OINP employer streams require current or imminent job offer; gap since last job affects eligibility window</td>
+  <td class="exc">Job ended &gt;3 years ago → CEC window may have passed; recalculate from end date</td>
+  <td>If ended, calculate whether within 3-year window; flag expiry risk</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Urgent filing if window closing; expiry monitoring if ongoing</td>
+  <td><span class="key k-gap">B-07</span></td>
+</tr>
+<tr>
+  <td>Does your Canadian occupation fall in: healthcare/social services, STEM, trades, transport, education, agriculture, or are you a physician, researcher, or senior manager?</td>
+  <td><span class="key k-cat">Q-12</span></td>
+  <td><div class="pills"><span class="key k-cat">R-CAT-01</span><span class="key k-cat">R-CAT-02</span><span class="key k-cat">R-CAT-03</span><span class="key k-cat">R-CAT-04</span></div></td>
+  <td>Category-based selection (active since 2023) allows draws at lower CRS for targeted occupations; physician/researcher/senior manager categories have specific Canadian experience minimums</td>
+  <td class="exc">Occupation not in any targeted category → only general pool draws apply</td>
+  <td>If NOC confirmed, cross-reference IRCC's active category list; flag if in borderline category</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">Category draw strategy; priority filing when targeted draw opens</td>
+  <td><span class="key k-cat">B-09</span></td>
+</tr>
+
+<!-- MODULE 3: Foreign Work Experience -->
+<tr>
+  <td colspan="9" style="background:var(--color-background-secondary);font-size:11px;font-weight:500;color:var(--color-text-secondary);padding:5px 10px">MODULE 3 — Foreign Work Experience (FSW, FST, CRS Points)</td>
+</tr>
+<tr>
+  <td>How many years of foreign skilled work experience do you have in the last 10 years?</td>
+  <td><span class="key k-fsw">Q-13</span></td>
+  <td><div class="pills"><span class="key k-fsw">R-FSW-01</span><span class="key k-gap">R-GAP-02</span></div></td>
+  <td>FSW requires minimum 1 year continuous foreign skilled work (NOC TEER 0/1/2/3) within last 10 years; additional years add CRS points (max 50 pts for 3+ yrs foreign experience)</td>
+  <td class="exc">No qualifying foreign work → FSW ineligible unless arranged employment substitutes; self-employment in some professions eligible</td>
+  <td>If dates uncertain, estimate from resume and flag for verification</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">FSW eligibility review; foreign credential document gathering</td>
+  <td><span class="key k-fsw">B-03</span></td>
+</tr>
+<tr>
+  <td>Is the foreign work experience within the last 5 years (FSW CRS window)?</td>
+  <td><span class="key k-fsw">Q-14</span></td>
+  <td><div class="pills"><span class="key k-fsw">R-FSW-01</span><span class="key k-gap">R-GAP-06</span></div></td>
+  <td>CRS awards foreign experience points only for work within the last 5 years (max 50 pts); work older than 5 years still counts for FSW minimum eligibility but yields 0 CRS points</td>
+  <td class="exc">All foreign work &gt;5 years old → no CRS points from foreign experience; still counts for eligibility if within 10 yrs</td>
+  <td>Note expiry date of foreign experience CRS points; flag as time-sensitive if approaching 5-year mark</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Time-sensitive: file before 5-year window closes for CRS points</td>
+  <td><span class="key k-gap">B-07</span></td>
+</tr>
+<tr>
+  <td>Was the foreign work continuous and paid? Was it skilled (TEER 0/1/2/3)?</td>
+  <td><span class="key k-fsw">Q-15</span></td>
+  <td><div class="pills"><span class="key k-fsw">R-FSW-01</span><span class="key k-fst">R-FST-01</span><span class="key k-gap">R-GAP-02</span></div></td>
+  <td>FSW requires paid, non-self-employed work at skilled level; periods of unpaid work, volunteer work, or TEER 4/5 do not count</td>
+  <td class="exc">Unpaid or TEER 4/5 → excluded from FSW foreign experience count</td>
+  <td>Flag any gaps or unpaid periods; request employment contracts/payslips</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">Employment history audit; document gathering</td>
+  <td><span class="key k-fsw">B-03</span></td>
+</tr>
+<tr>
+  <td>Does the foreign work fall in a skilled trade occupation?</td>
+  <td><span class="key k-fst">Q-16</span></td>
+  <td><div class="pills"><span class="key k-fst">R-FST-01</span></div></td>
+  <td>FST allows foreign trade experience to qualify if combined with a Canadian job offer or provincial certificate; foreign trade experience within last 5 years (720 hrs min)</td>
+  <td class="exc">Not a trade occupation → FST ineligible; check FSW instead</td>
+  <td>Cross-reference NOC list for trade classifications; flag for FST review if trade-adjacent</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">FST trade path review; certificate/job offer strategy</td>
+  <td><span class="key k-fst">B-04a</span></td>
+</tr>
+
+<!-- MODULE 4: Language -->
+<tr>
+  <td colspan="9" style="background:var(--color-background-secondary);font-size:11px;font-weight:500;color:var(--color-text-secondary);padding:5px 10px">MODULE 4 — Language (Eligibility Threshold + CRS Points)</td>
+</tr>
+<tr>
+  <td>Which language test did you take? (IELTS, CELPIP, TEF, TCF)</td>
+  <td><span class="key k-cec">Q-17</span></td>
+  <td><div class="pills"><span class="key k-cec">R-CEC-01</span><span class="key k-fsw">R-FSW-01</span><span class="key k-fst">R-FST-01</span><span class="key k-cat">R-CAT-05</span></div></td>
+  <td>All EE programs require a valid, designated language test; TEF/TCF results trigger French category-based draw eligibility if NCLC 7+ in all abilities</td>
+  <td class="exc">No test taken → cannot create/update EE profile; immediate action required</td>
+  <td>If no test: flag as R-GAP-03; recommend test booking as next action</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Language test referral or booking; strategy for optimal test choice</td>
+  <td><span class="key k-cat">B-08</span></td>
+</tr>
+<tr>
+  <td>What are your scores in speaking, listening, reading, writing?</td>
+  <td><span class="key k-cec">Q-18</span></td>
+  <td><div class="pills"><span class="key k-cec">R-CEC-01</span><span class="key k-fsw">R-FSW-01</span><span class="key k-fst">R-FST-01</span><span class="key k-cat">R-CAT-05</span><span class="key k-gap">R-GAP-03</span></div></td>
+  <td>CEC min: CLB 7 in all abilities; FSW min: CLB 7; FST min: CLB 5 listening/reading, CLB 4 speaking/writing; higher scores add significant CRS points (CLB 9+ = max language points); French NCLC 7+ in all → category draw eligibility</td>
+  <td class="exc">Below CLB 7 for CEC/FSW or below CLB 4/5 for FST → program-specific exclusion</td>
+  <td>Map IELTS/CELPIP scores to CLB; flag if borderline (e.g. 6.5 = CLB 8; 6.0 = CLB 7)</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">If gap: language upgrade strategy; if passing: CRS score update</td>
+  <td><span class="key k-cat">B-08</span></td>
+</tr>
+<tr>
+  <td>What is your test date? Is it still valid (within 2 years)?</td>
+  <td><span class="key k-gap">Q-19</span></td>
+  <td><div class="pills"><span class="key k-gap">R-GAP-03</span><span class="key k-ops">R-OPS-03</span></div></td>
+  <td>Language test results expire after 2 years from test date; expired test means current EE profile is invalid regardless of scores</td>
+  <td class="exc">Test expired → profile is invalid; retake required before any filing</td>
+  <td>If expiry within 3 months: flag as urgent; recommend booking immediately</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Urgent: book retest; advise on optimal timing relative to filing</td>
+  <td><span class="key k-cat">B-08</span></td>
+</tr>
+<tr>
+  <td>Do you have French test results (TEF Canada or TCF Canada)?</td>
+  <td><span class="key k-cat">Q-20</span></td>
+  <td><div class="pills"><span class="key k-cat">R-CAT-05</span></div></td>
+  <td>French proficiency at NCLC 7+ in all 4 abilities → eligible for French category-based draws (active since 2023); bilingual candidates gain additional CRS points (up to 50 pts for strong French + English)</td>
+  <td class="exc">No French test → not eligible for French category draw; no bilingual CRS bonus</td>
+  <td>If French spoken at home/work: recommend TEF/TCF booking for potential 50-pt CRS boost</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">French language strategy; test booking referral</td>
+  <td><span class="key k-cat">B-08</span></td>
+</tr>
+<tr>
+  <td>Do you plan to retake any language test to improve scores?</td>
+  <td><span class="key k-gap">Q-21</span></td>
+  <td><div class="pills"><span class="key k-gap">R-GAP-03</span><span class="key k-ops">R-OPS-04</span></div></td>
+  <td>A single CLB band improvement can add 30–50+ CRS points; targeted retake strategy is high-ROI for candidates near CRS thresholds</td>
+  <td class="exc">Not applicable</td>
+  <td>Simulate CRS delta for +1 band improvement to quantify value of retake</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">Language improvement action plan; referral to prep resources</td>
+  <td><span class="key k-cat">B-08</span></td>
+</tr>
+
+<!-- MODULE 5: Education -->
+<tr>
+  <td colspan="9" style="background:var(--color-background-secondary);font-size:11px;font-weight:500;color:var(--color-text-secondary);padding:5px 10px">MODULE 5 — Education (FSW Grid + CRS Points)</td>
+</tr>
+<tr>
+  <td>What is your highest level of education completed?</td>
+  <td><span class="key k-fsw">Q-22</span></td>
+  <td><div class="pills"><span class="key k-fsw">R-FSW-01</span><span class="key k-gap">R-GAP-04</span></div></td>
+  <td>FSW selection grid awards up to 25 pts for education; CRS awards up to 150 pts (single) or 140 pts (married) for doctoral degree; secondary school diploma = minimum for FSW but lowest CRS education points</td>
+  <td class="exc">No secondary school diploma → FSW education minimum not met (though rarely the binding constraint)</td>
+  <td>Use highest known credential; flag if unclear whether foreign degree is equivalent</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">Education section of CRS update; ECA referral if foreign credential</td>
+  <td><span class="key k-gap">B-06</span></td>
+</tr>
+<tr>
+  <td>Was the credential earned in Canada or abroad?</td>
+  <td><span class="key k-fsw">Q-23</span></td>
+  <td><div class="pills"><span class="key k-fsw">R-FSW-01</span><span class="key k-gap">R-GAP-04</span></div></td>
+  <td>Canadian credentials count directly in CRS; foreign credentials require a valid ECA from a designated organization (e.g. WES) to be recognized; without ECA, foreign degree may score as "secondary school" in CRS</td>
+  <td class="exc">Foreign credential + no ECA → CRS education points severely reduced; may cost 50–100 CRS pts</td>
+  <td>If foreign and no ECA confirmed: flag R-GAP-04 (ECA missing); calculate CRS cost of missing ECA</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">ECA application referral; calculate CRS impact of obtaining ECA</td>
+  <td><span class="key k-gap">B-06</span></td>
+</tr>
+<tr>
+  <td>Do you have a valid ECA (Educational Credential Assessment) for your foreign credential?</td>
+  <td><span class="key k-fsw">Q-24</span></td>
+  <td><div class="pills"><span class="key k-fsw">R-FSW-01</span><span class="key k-gap">R-GAP-04</span></div></td>
+  <td>ECA required for FSW if highest education is foreign; ECA validity is generally 5 years; expired ECA must be renewed before filing</td>
+  <td class="exc">No ECA for foreign credential → FSW eligibility in question; CRS education points capped</td>
+  <td>If ECA exists but expiry unknown: request documentation; flag if likely expired</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">ECA application (WES or other designated org); timeline 3–5 months</td>
+  <td><span class="key k-gap">B-06</span></td>
+</tr>
+
+<!-- MODULE 6: Job Offer & Ontario Employer -->
+<tr>
+  <td colspan="9" style="background:var(--color-background-secondary);font-size:11px;font-weight:500;color:var(--color-text-secondary);padding:5px 10px">MODULE 6 — Job Offer & Ontario Employer Data (OINP Streams + CRS Points)</td>
+</tr>
+<tr>
+  <td>Do you have a current job offer from an Ontario employer?</td>
+  <td><span class="key k-pnp">Q-25</span></td>
+  <td><div class="pills"><span class="key k-pnp">R-PNP-01</span><span class="key k-pnp">R-PNP-02</span><span class="key k-fst">R-FST-01</span><span class="key k-gap">R-GAP-07</span></div></td>
+  <td>Valid Ontario job offer is required for OINP Employer Job Offer (Foreign Worker and International Student) streams; also qualifies as "arranged employment" in FST if in a trade NOC; LMIA-backed or exempt offer adds 50–200 CRS pts for federal EE</td>
+  <td class="exc">No job offer → OINP employer streams excluded; no arranged employment CRS bonus</td>
+  <td>If offer informal or verbal: flag for formal offer validation; employer intake required</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Employer intake; job offer validation; OINP employer registration check</td>
+  <td><span class="key k-pnp">B-04</span></td>
+</tr>
+<tr>
+  <td>Is the job offer full-time, permanent, and paid at prevailing wage?</td>
+  <td><span class="key k-pnp">Q-26</span></td>
+  <td><div class="pills"><span class="key k-pnp">R-PNP-01</span><span class="key k-pnp">R-PNP-02</span></div></td>
+  <td>OINP requires the offer to be non-seasonal, full-time (30+ hrs/wk), and at or above prevailing wage for the occupation and region; CRA T4 or offer letter used as evidence</td>
+  <td class="exc">Seasonal, temporary, or below-wage offer → OINP employer streams excluded</td>
+  <td>If offer details unclear: flag for employer document review before proceeding</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Employer document package; wage validation against LMI data</td>
+  <td><span class="key k-pnp">B-04</span></td>
+</tr>
+<tr>
+  <td>What is the NOC/TEER of the job offer?</td>
+  <td><span class="key k-pnp">Q-27</span></td>
+  <td><div class="pills"><span class="key k-pnp">R-PNP-01</span><span class="key k-pnp">R-PNP-02</span><span class="key k-pnp">R-PNP-03</span><span class="key k-fst">R-FST-01</span></div></td>
+  <td>OINP Foreign Worker: TEER 0/1/2/3; OINP In-Demand: specific TEER 2/3 trade/construction NOCs; FST: must be a designated skilled trade NOC</td>
+  <td class="exc">TEER 4/5 job offer → OINP employer streams excluded</td>
+  <td>Use job title to infer NOC/TEER; validate before stream selection</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">NOC mapping; stream selection (FW vs IDS vs FST alignment)</td>
+  <td><span class="key k-pnp">B-04</span></td>
+</tr>
+<tr>
+  <td>Employer details: Ontario CRA registration, years in operation, full-time staff count, annual revenue</td>
+  <td><span class="key k-pnp">Q-28</span></td>
+  <td><div class="pills"><span class="key k-pnp">R-PNP-01</span><span class="key k-pnp">R-PNP-02</span></div></td>
+  <td>OINP employer must: be registered in Ontario, have operated for ≥2 years, employ ≥2 FT staff (for some streams ≥5), have annual revenue ≥$500K (varies by stream and sector)</td>
+  <td class="exc">New employer (&lt;2 yrs), insufficient staff/revenue → OINP employer stream ineligible; explore federal EE only</td>
+  <td>If employer data unavailable: flag as "employer validation required"; delay OINP assessment</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">Employer registration with OINP; employer intake package</td>
+  <td><span class="key k-pnp">B-04</span></td>
+</tr>
+<tr>
+  <td>Is the employer willing to actively support an OINP application?</td>
+  <td><span class="key k-pnp">Q-29</span></td>
+  <td><div class="pills"><span class="key k-pnp">R-PNP-01</span><span class="key k-pnp">R-PNP-02</span></div></td>
+  <td>OINP employer streams require employer signature, compliance history, and active participation in the OINP employer portal; passive employers make filing impossible even if otherwise eligible</td>
+  <td class="exc">Employer unwilling → OINP employer streams blocked; revert to federal EE pathways</td>
+  <td>If unsure: recommend client brief their employer on OINP obligations; offer employer education service</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">Employer education session; OINP intake package with employer</td>
+  <td><span class="key k-pnp">B-04</span></td>
+</tr>
+<tr>
+  <td>Is the job offer LMIA-supported or LMIA-exempt (CUSMA, ICT, etc.)?</td>
+  <td><span class="key k-pnp">Q-30</span></td>
+  <td><div class="pills"><span class="key k-pnp">R-PNP-01</span><span class="key k-fsw">R-FSW-01</span></div></td>
+  <td>Valid LMIA-backed job offer at NOC TEER 0/1 = +200 CRS pts; TEER 2/3 = +50 CRS pts; LMIA-exempt (qualifying categories) also counts; transforms the competitive CRS landscape significantly</td>
+  <td class="exc">Non-LMIA, non-exempt offer → no arranged employment CRS bonus; OINP streams may still apply</td>
+  <td>If LMIA status uncertain: check work permit category; flag for employer LMIA discussion</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">LMIA strategy advisory; CRS score recalculation with/without LMIA</td>
+  <td><span class="key k-gap">B-07</span></td>
+</tr>
+
+<!-- MODULE 7: Trades & Licensing -->
+<tr>
+  <td colspan="9" style="background:var(--color-background-secondary);font-size:11px;font-weight:500;color:var(--color-text-secondary);padding:5px 10px">MODULE 7 — Trades & Licensing (FST + OINP In-Demand Skills)</td>
+</tr>
+<tr>
+  <td>Is your occupation a designated skilled trade under IRCC's FST list?</td>
+  <td><span class="key k-fst">Q-31</span></td>
+  <td><div class="pills"><span class="key k-fst">R-FST-01</span><span class="key k-pnp">R-PNP-03</span></div></td>
+  <td>FST covers: industrial, electrical, construction trades; maintenance and equipment operation/repair; supervisors and technical jobs in natural resources, agriculture; chefs and cooks; butchers and bakers; must verify against IRCC's designated trade NOC list</td>
+  <td class="exc">Occupation not on designated trade list → FST ineligible; check OINP IDS stream separately</td>
+  <td>Use NOC code confirmed in Q-07/Q-16 to cross-reference trade list</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">FST eligibility confirmation; trade path review</td>
+  <td><span class="key k-fst">B-04a</span></td>
+</tr>
+<tr>
+  <td>Do you hold a certificate of qualification (Red Seal or provincial) in your trade?</td>
+  <td><span class="key k-fst">Q-32</span></td>
+  <td><div class="pills"><span class="key k-fst">R-FST-01</span><span class="key k-pnp">R-PNP-03</span></div></td>
+  <td>FST requires EITHER a Canadian job offer in the trade OR a valid certificate of qualification; Red Seal or provincial certificate in Ontario satisfies the certificate condition; trade must match the certificate</td>
+  <td class="exc">No certificate and no qualifying job offer → FST blocked; must obtain one before filing</td>
+  <td>If certificate pending or in process: flag timeline; estimate wait time for certification</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Certificate application guidance; licensing body referral; FST timeline planning</td>
+  <td><span class="key k-fst">B-04a</span></td>
+</tr>
+<tr>
+  <td>Is your trade occupation in construction, agriculture, manufacturing, or logistics (OINP In-Demand Skills specific trades)?</td>
+  <td><span class="key k-pnp">Q-33</span></td>
+  <td><div class="pills"><span class="key k-pnp">R-PNP-03</span></div></td>
+  <td>OINP In-Demand Skills stream targets specific TEER 2/3 trade and support occupations in priority sectors; does not require EE profile; requires Ontario job offer and employer registration</td>
+  <td class="exc">Occupation not in OINP IDS eligible list → stream excluded; check FST or OINP FW instead</td>
+  <td>Verify against current OINP IDS eligible occupation list (updated periodically)</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">OINP IDS filing package; employer registration with OINP</td>
+  <td><span class="key k-pnp">B-05</span></td>
+</tr>
+
+<!-- MODULE 8: Family & Additional CRS -->
+<tr>
+  <td colspan="9" style="background:var(--color-background-secondary);font-size:11px;font-weight:500;color:var(--color-text-secondary);padding:5px 10px">MODULE 8 — Family Ties & Additional CRS Factors</td>
+</tr>
+<tr>
+  <td>Do you have a sibling (including half-sibling) who is a Canadian citizen or permanent resident and is 18 or older?</td>
+  <td><span class="key k-fsw">Q-34</span></td>
+  <td><div class="pills"><span class="key k-fsw">R-FSW-01</span></div></td>
+  <td>A qualifying sibling in Canada adds 15 CRS points; for FSW selection grid, adds up to 10 adaptability points; applies to candidate OR their spouse/common-law partner's sibling</td>
+  <td class="exc">Sibling under 18 or not PR/citizen → no points</td>
+  <td>If sibling status uncertain: request confirmation of PR/citizenship status</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">Update EE profile with sibling information; +15 CRS points</td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>Marital status and spouse's qualifications (language scores, Canadian education, Canadian work experience)</td>
+  <td><span class="key k-fsw">Q-35</span></td>
+  <td><div class="pills"><span class="key k-fsw">R-FSW-01</span><span class="key k-cec">R-CEC-01</span></div></td>
+  <td>Spouse's CLB scores, Canadian degree, and Canadian work experience all add CRS points to the principal applicant's score; spouse with CLB 9+ adds ~20 pts; Canadian degree adds ~10 pts; spouse's Canadian work adds up to 10 pts</td>
+  <td class="exc">Common-law partner not declared in profile → zero spousal points; must be correctly declared</td>
+  <td>If spouse qualifications not gathered: flag as incomplete; schedule spouse data collection</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">Spousal data collection; full CRS calculation with spouse factors</td>
+  <td><span class="key k-cec">B-02</span></td>
+</tr>
+
+<!-- MODULE 9: Operational/Profile -->
+<tr>
+  <td colspan="9" style="background:var(--color-background-secondary);font-size:11px;font-weight:500;color:var(--color-text-secondary);padding:5px 10px">MODULE 9 — Operational & Profile Outputs</td>
+</tr>
+<tr>
+  <td>What was the client's last known CRS score (from consultant's file or client's recall)?</td>
+  <td><span class="key k-ops">Q-36</span></td>
+  <td><div class="pills"><span class="key k-ops">R-OPS-04</span><span class="key k-ops">R-OPS-05</span></div></td>
+  <td>Baseline score allows comparison: "You were at 312; based on your answers, you're now approximately 455–475." The delta is the core reactivation hook and the value proposition for the consultant's outreach</td>
+  <td class="exc">Score unknown → calculate estimated current score fresh; no delta comparison possible</td>
+  <td>If unknown, skip delta framing and present estimated current score as standalone</td>
+  <td><span class="conf conf-med">Medium</span></td>
+  <td class="next">Prepare CRS delta summary for consultant outreach message</td>
+  <td><span class="key k-ops">B-10</span></td>
+</tr>
+<tr>
+  <td>Which programs/streams was the client previously assessed for or enrolled in?</td>
+  <td><span class="key k-ops">Q-37</span></td>
+  <td><div class="pills"><span class="key k-ops">R-OPS-05</span><span class="key k-ops">R-OPS-06</span></div></td>
+  <td>Identifies which paths are new vs previously considered; prevents recommending what was already attempted; surfaces cases where previous application is still pending (inadmissibility risk if new application filed)</td>
+  <td class="exc">Previous application still active/pending → new application may create complications; legal review required</td>
+  <td>If consultant file notes available, extract prior assessments; otherwise ask client directly</td>
+  <td><span class="conf conf-high">High</span></td>
+  <td class="next">Cross-reference with current eligibility; flag any conflicts with prior applications</td>
+  <td>—</td>
+</tr>
+
+</tbody>
+</table>
+</div>
+
+<div class="divider"></div>
+
+<div class="section-label">Table 2 — Billing Reference (Result Key → Consultant Billable Ticket + Estimated Fee)</div>
+<div class="tbl-wrap">
+<table>
+<thead>
+<tr>
+  <th>Billing key</th>
+  <th>Result key(s)</th>
+  <th>Triggered when</th>
+  <th>Consultant billable service</th>
+  <th>Description of work</th>
+  <th>Estimated ticket value</th>
+  <th>Revenue tier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><span class="key k-ops">B-01</span></td>
+  <td><div class="pills"><span class="key k-ops">R-OPS-02</span><span class="key k-ops">R-OPS-03</span></div></td>
+  <td>No profile, expired profile, or stale profile (&gt;6 months)</td>
+  <td>Profile creation / reactivation + strategy session</td>
+  <td>Create or refresh EE profile with updated scores, experience, and current program selection; re-run CRS calculation; reposition client in active draw pools</td>
+  <td class="bill-mid">$500 – $1,200</td>
+  <td>Foundational — entry point for all other billing</td>
+</tr>
+<tr>
+  <td><span class="key k-cec">B-02</span></td>
+  <td><div class="pills"><span class="key k-cec">R-CEC-01</span></div></td>
+  <td>1+ year Canadian skilled work confirmed; CEC eligibility newly established</td>
+  <td>CEC eligibility verification + CRS re-score + filing prep</td>
+  <td>Document Canadian work history (T4s, ROEs, employer letters); verify NOC/TEER alignment; recalculate full CRS with current inputs; determine draw competitiveness; prepare for ITA</td>
+  <td class="bill-mid">$500 – $1,200</td>
+  <td>High-frequency; core of reactivation offer</td>
+</tr>
+<tr>
+  <td><span class="key k-fsw">B-03</span></td>
+  <td><div class="pills"><span class="key k-fsw">R-FSW-01</span></div></td>
+  <td>Foreign skilled work qualifies; 67/100 FSW grid points established</td>
+  <td>FSW eligibility review + credential document gathering + ECA referral</td>
+  <td>Verify foreign employment history; confirm ECA status or initiate ECA; validate FSW grid score; add FSW as concurrent program in EE profile alongside CEC; brief on double-pool advantage</td>
+  <td class="bill-mid">$800 – $1,500</td>
+  <td>Moderate-frequency; high value when CEC + FSW concurrent</td>
+</tr>
+<tr>
+  <td><span class="key k-fst">B-04a</span></td>
+  <td><div class="pills"><span class="key k-fst">R-FST-01</span></div></td>
+  <td>Trade occupation confirmed; certificate or job offer present</td>
+  <td>FST full filing package + PNP alignment review</td>
+  <td>Verify trade NOC classification; confirm certificate of qualification or job offer validity; prepare FST application package; coordinate with provincial licensing body if needed; assess concurrent OINP IDS eligibility</td>
+  <td class="bill-high">$1,500 – $3,000</td>
+  <td>High value; FST draws have had lower CRS cutoffs historically</td>
+</tr>
+<tr>
+  <td><span class="key k-pnp">B-04</span></td>
+  <td><div class="pills"><span class="key k-pnp">R-PNP-01</span><span class="key k-pnp">R-PNP-02</span></div></td>
+  <td>Ontario employer job offer confirmed + employer meets OINP requirements</td>
+  <td>OINP Foreign Worker or International Student filing package</td>
+  <td>Employer registration with OINP portal; employer compliance document package; candidate application prep; job offer validation; LRSS coordination; full OINP application to submission</td>
+  <td class="bill-high">$1,000 – $2,500</td>
+  <td>High value; bypasses CRS pool for employer-supported clients</td>
+</tr>
+<tr>
+  <td><span class="key k-pnp">B-05</span></td>
+  <td><div class="pills"><span class="key k-pnp">R-PNP-03</span></div></td>
+  <td>Occupation matches OINP In-Demand Skills eligible list + Ontario offer</td>
+  <td>OINP In-Demand Skills stream filing package</td>
+  <td>Occupation list cross-reference; employer registration with OINP IDS intake; full application prep for in-demand trades stream; does not require EE profile (standalone PR path)</td>
+  <td class="bill-high">$1,200 – $2,500</td>
+  <td>High value; standalone path independent of CRS pool</td>
+</tr>
+<tr>
+  <td><span class="key k-gap">B-06</span></td>
+  <td><div class="pills"><span class="key k-gap">R-GAP-04</span></div></td>
+  <td>Foreign credential identified with no valid ECA on file</td>
+  <td>ECA application advisory + CRS impact analysis</td>
+  <td>Calculate CRS points gained by obtaining ECA (typically 50–100 pts delta); initiate ECA with WES or designated org; advise on document requirements and timeline (3–5 months); update profile once ECA received</td>
+  <td class="bill-mid">$300 – $800</td>
+  <td>Moderate; high ROI for client due to CRS point impact</td>
+</tr>
+<tr>
+  <td><span class="key k-gap">B-07</span></td>
+  <td><div class="pills"><span class="key k-gap">R-GAP-01</span><span class="key k-gap">R-GAP-02</span><span class="key k-gap">R-GAP-06</span></div></td>
+  <td>Experience window closing, CEC hours short, foreign experience aging out, or LMIA strategy needed</td>
+  <td>Gap analysis + monitoring plan + LMIA/timeline advisory</td>
+  <td>Identify exact gap (months to CEC, points lost when foreign experience ages out); quantify CRS impact of LMIA; create timeline and milestone plan; set follow-up cadence; advisory on LMIA employer approach</td>
+  <td class="bill-low">$500 – $2,000</td>
+  <td>Variable; foundational for clients not yet eligible</td>
+</tr>
+<tr>
+  <td><span class="key k-cat">B-08</span></td>
+  <td><div class="pills"><span class="key k-cat">R-CAT-05</span><span class="key k-gap">R-GAP-03</span></div></td>
+  <td>Language test expired, scores borderline, French opportunity identified, or retake strategy warranted</td>
+  <td>Language strategy session + test referral + CRS delta modeling</td>
+  <td>Map current scores to CLB; simulate CRS impact of +1 band improvement; advise on IELTS vs CELPIP vs TEF choice; provide French test referral for bilingual candidates; flag expiry-urgency cases</td>
+  <td class="bill-low">$300 – $800</td>
+  <td>Low ticket, high leverage — often unlocks higher-value pathways</td>
+</tr>
+<tr>
+  <td><span class="key k-cat">B-09</span></td>
+  <td><div class="pills"><span class="key k-cat">R-CAT-01</span><span class="key k-cat">R-CAT-02</span><span class="key k-cat">R-CAT-03</span><span class="key k-cat">R-CAT-04</span></div></td>
+  <td>Occupation confirmed in IRCC targeted category (healthcare, STEM, trades, transport, agriculture, education, physicians, researchers, senior managers)</td>
+  <td>Category-based draw strategy + priority filing advisory</td>
+  <td>Confirm category eligibility; monitor IRCC draw calendar for relevant category draws; advise on optimal timing; brief on lower CRS cutoffs for category draws vs general pool; ensure profile is positioned for category selection</td>
+  <td class="bill-mid">$500 – $1,000</td>
+  <td>Moderate; time-sensitive when draws are active</td>
+</tr>
+<tr>
+  <td><span class="key k-ops">B-10</span></td>
+  <td><div class="pills"><span class="key k-ops">R-OPS-04</span><span class="key k-ops">R-OPS-05</span><span class="key k-ops">R-OPS-06</span></div></td>
+  <td>Client has no new pathways now but situation will evolve; monitoring cadence warranted</td>
+  <td>PR Readiness Monitoring retainer</td>
+  <td>Bi-annual check-in to reassess eligibility as experience accumulates, draws evolve, and new OINP streams open; CRS score refresh; proactive outreach when threshold reached; low-cost entry for consultant to maintain relationship</td>
+  <td class="bill-low">$0 – $300 / check-in</td>
+  <td>Low per-engagement; relationship maintenance; feeds future B-02 through B-09</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="divider"></div>
+<div style="font-size:11px;color:var(--color-text-tertiary);padding-bottom:8px">
+  Result key legend — R-CEC: Canadian Experience Class · R-FSW: Federal Skilled Worker · R-FST: Federal Skilled Trades · R-PNP: OINP provincial streams · R-CAT: Category-based draws · R-GAP: Gap / not yet eligible · R-OPS: Operational/profile · Confidence levels reflect data completeness needed for reliable output, not legal certainty. All fee ranges are estimates; actual consultant fees vary by firm, complexity, and client situation.
+</div>
+</div>
